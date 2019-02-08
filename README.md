@@ -2,22 +2,52 @@
 
 Set up simple backend web-service with GCP.
 
+## What do I want to do?
+
+Eventually:
+- Database with destinations 
+    - GET destinations
+- Database for user interaction
+    - POST interactions (like, dislike, view, click)
+    - GET liked destinations
+- Login to save userid and retrieve liked destinations
+
+Requirements:
+- Create 2 databases
+- Create API requests
+    - Either cloud functions; OR
+    - App engine services
+
+ToDo checklist: 
+- [x] Create destinations database
+- [ ] Create Cloud Function for retrieving (random) destinations from the DB
+    - [ ] Set up local Flask to test the API / emulate the function
+- [ ] Create user interaction database
+- [ ] Create API / Cloud Functions for interacting with a destination.
+- [ ] Build a front-end application
+- [ ] Get a "Good" destinations data set
+
+
 ## Components
 
 ### Two serverless options for hosting:
 
 1. Cloud Functions
     - Literally as simple as defining a function and deploying that. 
+    - although some tips & tricks, best practices and tests (!) in the documentation, a Python emulator is not existent. 
+    There is one for Node.js however. See below tutorial from oreilly.
     - https://cloud.google.com/functions/docs/tutorials/http#functions-update-install-gcloud-python
-    - Good tutorial on how to use cloud functions for React apps (including use of the Emulator): 
-    https://www.oreilly.com/learning/serverless-on-google-with-cloud-functions-and-react
+    - Good tutorial on setting up cloud functions with Firebase, incl. local testing: https://medium.com/@hiranya911/firebase-using-the-python-admin-sdk-on-google-cloud-functions-590f50226286
     - Python cloud function example: https://medium.com/google-cloud/deploying-a-python-serverless-function-in-minutes-with-gcp-19dd07e19824
+    - tutorial on how to use cloud functions for **React** apps (including use of the Emulator): 
+    https://www.oreilly.com/learning/serverless-on-google-with-cloud-functions-and-react
     
 2. App Engine
     - Create local Flask App then deploy on GCP
     - Your apps scale automatically to meet traffic demand.
     - https://cloud.google.com/appengine/docs/standard/python3/
     - https://medium.com/google-cloud/deploying-api-via-google-app-engine-1f0209ba5a5e
+    - https://medium.com/google-cloud/firebase-developing-an-app-engine-service-with-python-and-cloud-firestore-1640f92e14f4
     
 
 Difference: Cloud Functions is a straightforward “serverless” offering, while App Engine can be used to customize 
@@ -29,18 +59,12 @@ https://www.quora.com/Whats-the-difference-between-Cloud-Functions-and-App-Engin
 Cloud Firestore is THE database to be used:
 - Flexible, scalable NoSQL cloud database to store and sync data for client- and server-side development.
 - Has Admin SDK for python to read and write from Firestore
-- Tutorial for getting started with cloud firestore with Python: https://www.youtube.com/watch?v=yylnC3dr_no 
-- https://firebase.google.com/docs/firestore/
-- https://cloud.google.com/firestore/docs/data-model
 - (Cloud Firestore is the next major version of Cloud Datastore and a re- branding of the product.)
 - (Firebase Realtime Database is just a giant JSON tree, Cloud Firestore is a little more structured and flexible.)
 
-Both functions and engine can connect to the database.
+Both Cloud Functions and App Engine can connect to the database.
 
-Setup instructions:
-- Follow: https://cloud.google.com/firestore/docs/quickstart-servers
-- Create new GCP project
-- Create service account for firestore
+See `notebooks/` folder for reference material on how to use Firestore.
 
 NOTE: the [free tier](https://firebase.google.com/docs/firestore/quotas) allows 20.000 writes/deletes per day and up to 
 1GB of data. Number of free reads per day is 50.000. So take care to stay below that! This might become an issue when 
@@ -58,22 +82,6 @@ Firebase & Functions:
 - Using Java, but looks good: https://rominirani.com/build-a-serverless-online-quiz-with-google-cloud-functions-and-cloud-firestore-1e3fbf84a7d8
 
 
-## What do I want to do?
-
-Eventually:
-- Database with destinations 
-    - GET destinations
-- Database for user interaction
-    - POST interactions (like, dislike, view, click)
-    - GET liked destinations
-- Login to save userid and retrieve liked destinations
-
-At first: 
-- Create 2 databases
-- Create API requests
-    - Either cloud functions; OR
-    - App engine services
-
 
 ## When developing:
 
@@ -82,3 +90,5 @@ Set right credentials:
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS="credentials/stairway-firestore-key.json"
 ```
+
+Or explicitly reference service account credentials when executing code.
