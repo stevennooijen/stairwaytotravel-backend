@@ -1,0 +1,9 @@
+name: stairway-backend
+channels:
+  - defaults
+dependencies:
+  - jupyter=1.0.0
+  - pandas=0.24.1
+  - python=3.7.2
+  - pip:
+    - google-cloud-firestore==0.31.0
