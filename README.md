@@ -21,9 +21,11 @@ Requirements:
 ToDo checklist: 
 - [x] Create destinations database
 - [ ] Create Cloud Function for retrieving (random) destinations from the DB
-    - [ ] Set up local Flask to test the API / emulate the function
-- [ ] Create user interaction database
+    - [x] Set up local Flask to test the API / emulate the function
+- [ ] Create user interaction database (3 fields: user_id + dest_id + time + action)
 - [ ] Create API / Cloud Functions for interacting with a destination.
+    - [ ] Adapt random function such that it won't show destinations twice
+- [ ] Write tests for Flask APIs / Cloud Functions
 - [ ] Build a front-end application
 - [ ] Get a "Good" destinations data set
 
@@ -33,26 +35,16 @@ ToDo checklist:
 ### Two serverless options for hosting:
 
 1. Cloud Functions
-    - Literally as simple as defining a function and deploying that. 
-    - although some tips & tricks, best practices and tests (!) in the documentation, a Python emulator is not existent. 
-    There is one for Node.js however. See below tutorial from oreilly.
-    - https://cloud.google.com/functions/docs/tutorials/http#functions-update-install-gcloud-python
-    - Good tutorial on setting up cloud functions with Firebase, incl. local testing: https://medium.com/@hiranya911/firebase-using-the-python-admin-sdk-on-google-cloud-functions-590f50226286
-    - Python cloud function example: https://medium.com/google-cloud/deploying-a-python-serverless-function-in-minutes-with-gcp-19dd07e19824
-    - tutorial on how to use cloud functions for **React** apps (including use of the Emulator): 
-    https://www.oreilly.com/learning/serverless-on-google-with-cloud-functions-and-react
-    
-2. App Engine
-    - Create local Flask App then deploy on GCP
-    - Your apps scale automatically to meet traffic demand.
-    - https://cloud.google.com/appengine/docs/standard/python3/
-    - https://medium.com/google-cloud/deploying-api-via-google-app-engine-1f0209ba5a5e
-    - https://medium.com/google-cloud/firebase-developing-an-app-engine-service-with-python-and-cloud-firestore-1640f92e14f4
-    
+    - Define functions that accept a `flask.Request` object and deploy that. 
+    - Although some tips & tricks, best practices and tests in the documentation, a Python emulator is not existent. 
 
-Difference: Cloud Functions is a straightforward “serverless” offering, while App Engine can be used to customize 
+2. App Engine
+    - Create local Flask App then deploy on GCP.
+    - Your apps scale automatically to meet traffic demand.    
+
+[Difference](https://www.quora.com/Whats-the-difference-between-Cloud-Functions-and-App-Engine-in-Google-Cloud): 
+Cloud Functions is a straightforward “serverless” offering, while App Engine can be used to customize 
 the application infrastructure that meets the needs of your app. In other words: App Engine is more flexible.
-https://www.quora.com/Whats-the-difference-between-Cloud-Functions-and-App-Engine-in-Google-Cloud
 
 ### Database to be used:
 

@@ -3,3 +3,4 @@ data/
 credentials/
 notebooks/.ipynb_checkpoints/
 .idea/
+examples/
