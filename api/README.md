@@ -18,6 +18,18 @@ Then run Flask in `api/` folder:
 python app.py
 ```
 
+And call the API with:
+
+```bash
+# to get a random destination
+curl http://127.0.0.1:5000/api/
+```
+```bash
+# to request a specific destination
+curl http://127.0.0.1:5000/api/2
+```
+
+Flask docs:
 - Setting up a simple Flask server: https://flask-restful.readthedocs.io/en/0.3.5/quickstart.html
 
 
