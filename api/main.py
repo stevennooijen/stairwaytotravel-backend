@@ -5,7 +5,7 @@ from resources.destination import Destination
 app = Flask(__name__)
 api = Api(app)
 
-FIRESTORE_KEY = '../credentials/stairway-firestore-key.json'
+FIRESTORE_KEY = 'credentials/stairway-firestore-key.json'
 
 api.add_resource(Destination, '/api/',
                  resource_class_kwargs={'firestore-key': FIRESTORE_KEY})
