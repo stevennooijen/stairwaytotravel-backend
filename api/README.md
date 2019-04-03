@@ -7,6 +7,7 @@ App Engine (AE) basically hosts a Flask application.
 - [x] Move the db connection string out of the resource class in `destination.py`.
 - [x] Deploy to Google App Engine
 - [x] Solve CORS error for communicating with front-end
+- [x] Extend API with argument for searching in a continent
 - [ ] Create a Resource for user interactions API?
 - [ ] Discuss whether there is a 'safer' alternative then deploying `credentials` folder
 - [ ] Host on custom domain [`api.stairway.travel`](https://cloud.google.com/appengine/docs/standard/python/mapping-custom-domains)
@@ -28,15 +29,16 @@ And call the API with:
 ```bash
 # to get a random destination
 curl http://127.0.0.1:5000/api/
-```
-```bash
+
+# add arguments to the request
+curl http://127.0.0.1:5000/api/?continent=AF
+
 # to request a specific destination
 curl http://127.0.0.1:5000/api/2
 ```
 
 Flask docs:
 - Setting up a simple Flask server: https://flask-restful.readthedocs.io/en/0.3.5/quickstart.html
-
 
 ### About App Engine
 
