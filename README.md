@@ -22,12 +22,40 @@ ToDo checklist:
 - [x] Create destinations database
 - [ ] Create Cloud Function for retrieving (random) destinations from the DB
     - [x] Set up local Flask to test the API / emulate the function
-- [ ] Create user interaction database (3 fields: user_id + dest_id + time + action)
 - [ ] Create API / Cloud Functions for interacting with a destination.
     - [ ] Adapt random function such that it won't show destinations twice
+- [ ] Create user interaction database (3 fields: user_id + dest_id + time + action)
 - [ ] Write tests for Flask APIs / Cloud Functions
 - [ ] Build a front-end application
 - [ ] Get a "Good" destinations data set
+
+
+## Functionality
+
+3 APIs needed:
+1. Request a list of recommendations to explore
+2. Request a specific destination to read more about it
+3. Request a list of liked destinations for the bucketlist
+
+API 1: Exploring:
+1. User gets an initial list of destinations
+    - API returns **random** destinations
+2. User likes/dislikes a couple of them
+    - likes/dislikes are maintained in React `sessionStorage`
+3. User gets a new/updates list of destinations
+    - API has likes/dislikes as additional parameter
+    - Back-end model uses likes/dislikes to get new destinations
+4. Step 2 and 3 keep repeating
+
+API 2: Getting to know:
+1. User clicks on 'Read more' to retrieve specific destination page
+    - API returns that destination
+2. User can like/dislike
+3. And will then have to return to Exploring or go to a different tab.
+
+API 3: Retrieving wishlist
+1. User goes to bucketlist tab
+    - API returns liked destinations
 
 
 ## Components
