@@ -8,6 +8,7 @@ App Engine (AE) basically hosts a Flask application.
 - [x] Deploy to Google App Engine
 - [x] Solve CORS error for communicating with front-end
 - [x] Extend API with argument for searching in a continent
+- [x] Create Explore API that returns a list of destinations
 - [ ] Create a Resource for user interactions API?
 - [ ] Discuss whether there is a 'safer' alternative then deploying `credentials` folder
 - [ ] Host on custom domain [`api.stairway.travel`](https://cloud.google.com/appengine/docs/standard/python/mapping-custom-domains)
@@ -35,6 +36,9 @@ curl http://127.0.0.1:5000/api/?continent=AF
 
 # to request a specific destination
 curl http://127.0.0.1:5000/api/2
+
+# to request the explore endpoint
+curl http://127.0.0.1:5000/api/explore/?continent=AF
 ```
 
 Flask docs:
@@ -87,6 +91,10 @@ A list of allowed domains has to be provided in `main.py`:
 app = Flask(__name__)
 CORS(app, origins=["...", "...", "..."])
 ```
+
+The front-end is hosted through Google Firebase and creates two domains
+for the site: `stairwaytotravel.firebaseapp.com` and
+`stairwaytotravel.web.app`. Either one should be added in CORS.
 
 #### App Engine resources
 
