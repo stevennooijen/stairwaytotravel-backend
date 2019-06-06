@@ -1,6 +1,7 @@
 # folders
 data/
 credentials/
-notebooks/.ipynb_checkpoints/
+.ipynb_checkpoints/
+__pycache__/
 .idea/
 examples/
