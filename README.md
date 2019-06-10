@@ -26,9 +26,15 @@ ToDo checklist:
     - [ ] Adapt random function such that it won't show destinations twice
 - [ ] Create user interaction database (3 fields: user_id + dest_id + time + action)
 - [ ] Write tests for Flask APIs / Cloud Functions
-- [ ] Build a front-end application
+- [x] Build a front-end application
 - [ ] Get a "Good" destinations data set
-
+    - [x] For current Stairway set, use destinations with `succes > 0`
+    - [ ] Make sure all destinations are succesfully parsed
+    - [ ] Save continent in one variable, instead of one for each continent
+    - [ ] Add array with all parents. Then use `array_contains` filter
+    to select all destinations that are within a certain `parent` region
+- [ ] Set good (composite?) indices on Firestorm
+    - [x] One for each `continent` + `osp_importance`
 
 ## Functionality
 
@@ -56,6 +62,40 @@ API 2: Getting to know:
 API 3: Retrieving wishlist
 1. User goes to bucketlist tab
     - API returns liked destinations
+
+
+## Recommendations
+
+Old Stairway implementation is through BM25 and works as follows:
+1. The activity query from the user is a list with binary values for the
+activity types that the user wants to search on. See
+[`Profile.load_query()`](https://github.com/Braamling/project_travel/blob/432b21d7df96de3e456541d893d1f7a03a631836/REST_API/project_travel/classes/profile.py)
+2. This columns list is then used as input for
+[`bm25.recommend()`](https://github.com/Braamling/project_travel/blob/432b21d7df96de3e456541d893d1f7a03a631836/REST_API/project_travel/controllers/recommend.py)
+3. Which on its turn does an inner join between the `destinations` and
+`destination_scores` table to retrieve and return the destinations that
+score best. Scoring is done by summing the scores of each activity in
+the query over the destination.
+See [`BM25Recommendations.query()`](https://github.com/Braamling/project_travel/blob/432b21d7df96de3e456541d893d1f7a03a631836/REST_API/project_travel/dao/bm25Recommendations.py)
+
+To incorporate this, investigate:
+- to what extend activity scores from `destination_scores` should be
+included in Firestore.
+    - Likely hard to do, as we need to score ALL destinations and
+    Firestore is not meant for querying everything. Better to fetch the
+    resulting destination ids from the calculations and retrieve those
+    individually from Firestore.
+    - Alternatively, use Firestorm's `array_contains` filter. However
+    doesn't allow sorting on relevancy. It either contains the activity
+    or not (boolean), so you loose some sensitivity
+- if not possible, whether to read in these scores from for example a
+storage bucket and keep the scores in memory while processing.
+    - Logic for summing activity scores based on query is done in python
+    and this API should return a list of destinations ids that can then
+    be used for retrieval in Firestore.
+    - this means however that other filters like continent, budget and
+    temperature should also be taken into account in python before
+    retrieving the destination ids...?
 
 
 ## Components
