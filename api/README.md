@@ -39,6 +39,9 @@ curl http://127.0.0.1:5000/api/2
 
 # to request the explore endpoint
 curl http://127.0.0.1:5000/api/explore/?continent=AF
+
+# to do a POST request for email signup
+curl http://127.0.0.1:5000/signup/?email=dude@gmail.com -X POST
 ```
 
 Flask docs:

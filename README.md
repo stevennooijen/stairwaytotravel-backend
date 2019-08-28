@@ -33,6 +33,7 @@ ToDo checklist:
     - [ ] Save continent in one variable, instead of one for each continent
     - [ ] Add array with all parents. Then use `array_contains` filter
     to select all destinations that are within a certain `parent` region
+    - [ ] For activity labels possibly use Spacy and Prodigy
 - [ ] Set good (composite?) indices on Firestorm
     - [x] One for each `continent` + `osp_importance`
 
