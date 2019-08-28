@@ -1,4 +1,4 @@
-import numpy as np
+from numpy.random import normal
 
 from flask_restful import Resource, reqparse
 from google.cloud import firestore
@@ -38,7 +38,7 @@ class Destination(Resource):
                     .collection(self.db_collection)
                     .where(args['continent'], '==', 1)  # apply continent filter
                     # use osp_importance as randomizer
-                    .where('osp_importance', '<=', np.random.normal(osp_importance_mu, osp_importance_std))
+                    .where('osp_importance', '<=', normal(osp_importance_mu, osp_importance_std))
                     .order_by('osp_importance', direction=firestore.Query.DESCENDING)
                     .limit(1)
                     .get()
@@ -50,7 +50,7 @@ class Destination(Resource):
                     self.db
                     .collection(self.db_collection)
                     # use osp_importance as randomizer
-                    .where('osp_importance', '<=', np.random.normal(osp_importance_mu, osp_importance_std))
+                    .where('osp_importance', '<=', normal(osp_importance_mu, osp_importance_std))
                     .order_by('osp_importance', direction=firestore.Query.DESCENDING)
                     .limit(1)
                     .get()
