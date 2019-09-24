@@ -104,6 +104,9 @@ The front-end is hosted through Google Firebase and creates two domains
 for the site: `stairwaytotravel.firebaseapp.com` and
 `stairwaytotravel.web.app`. Either one should be added in CORS.
 
+Currently the backend serves both the front-end in production, as well
+as the [release branch](`https://stairwaytotravel-release.web.app/`).
+
 #### App Engine resources
 
 - https://cloud.google.com/appengine/docs/standard/python3/
