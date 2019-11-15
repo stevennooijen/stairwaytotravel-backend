@@ -170,7 +170,7 @@ def find_interlinks(raw):
     return legit_interlinks
 
 
-def filter_wiki(raw, promote_remaining=True, simplify_links=True):
+def filter_wiki(raw, promote_remaining=True, simplify_links=True, extract_features=False):
     """Filter out wiki markup from `raw`, leaving only text.
     Parameters
     ----------
@@ -180,6 +180,8 @@ def filter_wiki(raw, promote_remaining=True, simplify_links=True):
         Whether uncaught markup should be promoted to plain text.
     simplify_links : bool
         Whether links should be simplified keeping only their description text.
+    extract_features : bool
+        Whether some interesting features should be retrieved before the text gets cleaned.
     Returns
     -------
     str
@@ -189,10 +191,62 @@ def filter_wiki(raw, promote_remaining=True, simplify_links=True):
     # contributions to improving this code are welcome :)
     text = utils.to_unicode(raw, 'utf8', errors='ignore')
     text = utils.decode_htmlentities(text)  # '&amp;nbsp;' --> '\xa0'
-    return remove_markup(text, promote_remaining, simplify_links)
+    return remove_markup(text, promote_remaining, simplify_links, extract_features)
 
 
-def remove_markup(text, promote_remaining=True, simplify_links=True):
+def extract_geolocation(s):
+    """Retrieves geolocation from wikivoyage article text."""
+    pattern = re.compile(r'{{(geo|mapframe)\|([-]?[0-9]+[.]?[0-9]*)\|([-]?[0-9]+[.]?[0-9]*)([^}{]*)}}',
+                         re.DOTALL | re.UNICODE)
+
+    # get geo coordinates if available
+    match = re.search(pattern, s)
+    if match:
+        lat = match.group(2)
+        lon = match.group(3)
+        return lat, lon
+    else:
+        return None, None
+
+
+def extract_article_type(s):
+    """Retrieves wikivoyage article type and status features from text."""
+    pattern = re.compile(r'{{(outline|usable|guide|star)([^}{]*)}}',
+                         re.DOTALL | re.UNICODE | re.IGNORECASE)
+
+    match = re.search(pattern, s)
+    # return matches if available
+    if match:
+        status = match.group(1)
+        articletype = match.group(2)
+        return status, articletype
+    else:
+        return None, None
+
+
+def extract_ispartof(s):
+    """Retrieves wikivoyage `{{IsPartOf|...}}` feature from text."""
+    pattern = re.compile(r'{{(ispartof|isin)\|([^}{]*)}}',
+                         re.DOTALL | re.UNICODE | re.IGNORECASE)
+
+    match = re.search(pattern, s)
+    # return matches if available
+    if match:
+        return match.group(2)
+    else:
+        return None
+
+
+def extract_patterns(s):
+    """Retrieves several features from the input string and outputs them in a tuple."""
+    status, articletype = extract_article_type(s)
+    lat, lon = extract_geolocation(s)
+    ispartof = extract_ispartof(s)
+
+    return status, articletype, lat, lon, ispartof
+
+
+def remove_markup(text, promote_remaining=True, simplify_links=True, extract_features=False):
     """Filter out wiki markup from `text`, leaving only text.
     Parameters
     ----------
@@ -202,11 +256,17 @@ def remove_markup(text, promote_remaining=True, simplify_links=True):
         Whether uncaught markup should be promoted to plain text.
     simplify_links : bool
         Whether links should be simplified keeping only their description text.
+    extract_features : bool
+        Whether some interesting features should be retrieved before the text gets cleaned.
     Returns
     -------
     str
         `text` without markup.
     """
+    # ADJ: first capture important info, before removing the markup!
+    if extract_features:
+        patterns = extract_patterns(text)
+
     text = re.sub(RE_P2, '', text)  # remove the last list (=languages)
     # the wiki markup is recursive (markup inside markup etc)
     # instead of writing a recursive grammar, here we deal with that by removing
@@ -245,7 +305,10 @@ def remove_markup(text, promote_remaining=True, simplify_links=True):
     if promote_remaining:
         text = text.replace('[', '').replace(']', '')  # promote all remaining markup to plain text
 
-    return text
+    if extract_features:
+        return patterns, text
+    else:
+        return text
 
 
 def remove_template(s):
@@ -449,12 +512,14 @@ def process_article(args, tokenizer_func=tokenize, token_min_len=TOKEN_MIN_LEN,
     text, lemmatize, title, pageid = args
     # ADJ: keep original text too
     text_original = text
-    text = filter_wiki(text)
+    # ADJ: always search for patterns.
+    patterns, text = filter_wiki(text, extract_features=True)
     if lemmatize:
         result = utils.lemmatize(text)
     else:
         result = tokenizer_func(text, token_min_len, token_max_len, lower)
-    return text_original, result, title, pageid
+    # ADJ: return patterns and original text
+    return patterns, text_original, result, title, pageid
 
 
 def init_to_ignore_interrupt():
@@ -618,7 +683,8 @@ class WikiCorpus(TextCorpus):
             # process the corpus in smaller chunks of docs, because multiprocessing.Pool
             # is dumb and would load the entire input into RAM at once...
             for group in utils.chunkize(texts, chunksize=10 * self.processes, maxsize=1):
-                for text, tokens, title, pageid in pool.imap(_process_article, group):
+                # ADJ: also return patterns and text
+                for patterns, text, tokens, title, pageid in pool.imap(_process_article, group):
                     articles_all += 1
                     positions_all += len(tokens)
                     # article redirects and short stubs are pruned here
@@ -627,8 +693,9 @@ class WikiCorpus(TextCorpus):
                         continue
                     articles += 1
                     positions += len(tokens)
+                    # ADJ: return items of our desire
                     if self.metadata:
-                        yield (text, tokens, (pageid, title))
+                        yield (pageid, title, patterns, text)
                     else:
                         yield tokens
 
