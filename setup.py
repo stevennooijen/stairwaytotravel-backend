@@ -10,7 +10,8 @@ setup(
     name="stairway",
     description="Stairway to Travel backend utilities.",
     author="Steven Nooijen",
-    packages=find_packages('stairway'),
-    package_dir={"": "stairway"},
+    # Alternatively use find_packages('.') and exclude folders
+    packages=find_packages('src'),
+    package_dir={"": "src"},
     long_description=read('README.md'),
 )
