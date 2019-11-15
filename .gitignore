@@ -6,3 +6,5 @@ __pycache__/
 .idea/
 examples/
 .DS_Store
+*.egg-info/
+*.egg

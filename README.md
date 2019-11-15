@@ -99,6 +99,15 @@ storage bucket and keep the scores in memory while processing.
     retrieving the destination ids...?
 
 
+## Installing package
+
+For development, install the `stairway` package in the virtual
+environment with:
+
+```bash
+pip install --editable .
+```
+
 ## Components
 
 ### Two serverless options for hosting:
