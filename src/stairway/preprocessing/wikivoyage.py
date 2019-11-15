@@ -16,6 +16,7 @@ See :mod:`gensim.scripts.make_wiki` for a canned (example) command-line script b
 """
 
 import bz2
+import csv
 import logging
 import multiprocessing
 import re
@@ -717,3 +718,15 @@ class WikiCorpus(TextCorpus):
             self.length = articles  # cache corpus length
         finally:
             pool.terminate()
+
+    def write_to_csv(self, file_path):
+
+        f = open(file_path, "w", encoding='utf-8')
+
+        writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
+        writer.writerow(('pageid', 'title', 'status', 'articletype', 'lat', 'lon', 'isparto'))
+
+        for (pageid, title, (status, articletype, lat, lon, ispartof), text) in self.get_texts():
+            writer.writerow((pageid, title, status, articletype, lat, lon, ispartof))  # write destination info
+
+        f.close()
