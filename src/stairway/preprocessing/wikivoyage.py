@@ -197,32 +197,25 @@ def filter_wiki(raw, promote_remaining=True, simplify_links=True, extract_featur
 
 def extract_geolocation(s):
     """Retrieves geolocation from wikivoyage article text."""
-    pattern = re.compile(r'{{(geo|mapframe)\|([-]?[0-9]+[.]?[0-9]*)\|([-]?[0-9]+[.]?[0-9]*)([^}{]*)}}',
-                         re.DOTALL | re.UNICODE)
+    # (?s:.*) to match at furthest position and gradually back off
+    pattern = re.compile(r'(?s:.*){{(geo|mapframe)\|([-]?[0-9]+[.]?[0-9]*)[^|}{]*\|([-]?[0-9]+[.]?[0-9]*)([^}{]*)}}',
+                         re.DOTALL | re.UNICODE | re.IGNORECASE)
 
     # get geo coordinates if available
     match = re.search(pattern, s)
-    if match:
-        lat = match.group(2)
-        lon = match.group(3)
-        return lat, lon
-    else:
-        return None, None
+    lat, lon = (float(match.group(2)), float(match.group(3))) if match else (None, None)
+    return lat, lon
 
 
 def extract_article_type(s):
     """Retrieves wikivoyage article type and status features from text."""
-    pattern = re.compile(r'{{(outline|usable|guide|star)([^}{]*)}}',
+    pattern = re.compile(r'{{(outline|usable|guide|star|extra)(\w*)([^}{]*)}}',
                          re.DOTALL | re.UNICODE | re.IGNORECASE)
 
     match = re.search(pattern, s)
     # return matches if available
-    if match:
-        status = match.group(1)
-        articletype = match.group(2)
-        return status, articletype
-    else:
-        return None, None
+    status, articletype = (match.group(1).strip(), match.group(2).strip()) if match else (None, None)
+    return status, articletype
 
 
 def extract_ispartof(s):
@@ -232,10 +225,25 @@ def extract_ispartof(s):
 
     match = re.search(pattern, s)
     # return matches if available
-    if match:
-        return match.group(2)
-    else:
-        return None
+    return match.group(2).strip() if match else None
+
+
+def extract_disambiguation(s):
+    """Retrieves wikivoyage disambiguation feature from text."""
+    pattern = re.compile(r'{{(disamb|disambig|pagebanner\|Disambiguation banner.png)[^}{]*}}',
+                         re.DOTALL | re.UNICODE | re.IGNORECASE)
+
+    match = re.search(pattern, s)
+    return True if match else False
+
+
+def extract_historical(s):
+    """Retrieves wikivoyage disambiguation feature from text."""
+    pattern = re.compile(r'{{(historical)[^}{]*}}',
+                         re.DOTALL | re.UNICODE | re.IGNORECASE)
+
+    match = re.search(pattern, s)
+    return True if match else False
 
 
 def extract_patterns(s):
@@ -243,8 +251,10 @@ def extract_patterns(s):
     status, articletype = extract_article_type(s)
     lat, lon = extract_geolocation(s)
     ispartof = extract_ispartof(s)
+    disambiguation = extract_disambiguation(s)
+    historical = extract_historical(s)
 
-    return status, articletype, lat, lon, ispartof
+    return status, articletype, lat, lon, ispartof, disambiguation, historical
 
 
 def remove_markup(text, promote_remaining=True, simplify_links=True, extract_features=False):
@@ -686,17 +696,19 @@ class WikiCorpus(TextCorpus):
             for group in utils.chunkize(texts, chunksize=10 * self.processes, maxsize=1):
                 # ADJ: also return patterns and text
                 for patterns, text, tokens, title, pageid in pool.imap(_process_article, group):
+                    #ADJ: keep track of nr of tokens
+                    nr_tokens = len(tokens)
                     articles_all += 1
-                    positions_all += len(tokens)
+                    positions_all += nr_tokens
                     # article redirects and short stubs are pruned here
-                    if len(tokens) < self.article_min_tokens or \
+                    if nr_tokens < self.article_min_tokens or \
                             any(title.startswith(ignore + ':') for ignore in IGNORED_NAMESPACES):
                         continue
                     articles += 1
-                    positions += len(tokens)
-                    # ADJ: return items of our desire
+                    positions += nr_tokens
+                    # ADJ: return items of our desire, incl. count of number of tokens
                     if self.metadata:
-                        yield (pageid, title, patterns, text)
+                        yield (pageid, title, nr_tokens, patterns, text)
                     else:
                         yield tokens
 
@@ -724,9 +736,12 @@ class WikiCorpus(TextCorpus):
         f = open(file_path, "w", encoding='utf-8')
 
         writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow(('pageid', 'title', 'status', 'articletype', 'lat', 'lon', 'isparto'))
+        writer.writerow(('pageid', 'title', 'nr_tokens', 'status', 'articletype', 'lat', 'lon', 'ispartof',
+                         'disambiguation', 'historical'))
 
-        for (pageid, title, (status, articletype, lat, lon, ispartof), text) in self.get_texts():
-            writer.writerow((pageid, title, status, articletype, lat, lon, ispartof))  # write destination info
+        for (pageid, title, nr_tokens, (status, articletype, lat, lon, ispartof, disambiguation, historical),
+             text) in self.get_texts():
+            writer.writerow((pageid, title, nr_tokens, status, articletype, lat, lon, ispartof,
+                             disambiguation, historical))  # write destination info
 
         f.close()
