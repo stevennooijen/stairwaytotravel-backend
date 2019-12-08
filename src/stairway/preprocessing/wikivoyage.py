@@ -220,12 +220,12 @@ def extract_article_type(s):
 
 def extract_ispartof(s):
     """Retrieves wikivoyage `{{IsPartOf|...}}` feature from text."""
-    pattern = re.compile(r'{{(ispartof|isin)\|([^}{]*)}}',
+    pattern = re.compile(r'(?s:.*){{(ispartof|isin)\|([^}{]*)}}',
                          re.DOTALL | re.UNICODE | re.IGNORECASE)
 
     match = re.search(pattern, s)
     # return matches if available
-    return match.group(2).strip() if match else None
+    return match.group(2).strip().replace('_', ' ') if match else None
 
 
 def extract_disambiguation(s):
@@ -457,11 +457,18 @@ def extract_pages(f, filter_namespaces=False, filter_articles=None):
     title_path = "./{%(ns)s}title" % ns_mapping
     ns_path = "./{%(ns)s}ns" % ns_mapping
     pageid_path = "./{%(ns)s}id" % ns_mapping
+    # ADJ: capture redirects
+    redirect_path = "./{%(ns)s}redirect" % ns_mapping
 
     for elem in elems:
         if elem.tag == page_tag:
             title = elem.find(title_path).text
             text = elem.find(text_path).text
+            redirect_elem = elem.find(redirect_path)
+            if redirect_elem is None:  # check if redirect exists, if not replace with 'NA'
+                redirect = None
+            else:
+                redirect = redirect_elem.attrib.get('title')
 
             if filter_namespaces:
                 ns = elem.find(ns_path).text
@@ -477,7 +484,7 @@ def extract_pages(f, filter_namespaces=False, filter_articles=None):
                     text = None
 
             pageid = elem.find(pageid_path).text
-            yield title, text or "", pageid  # empty page will yield None
+            yield title, text or "", pageid, redirect  # empty page will yield None
 
             # Prune the element tree, as per
             # http://www.ibm.com/developerworks/xml/library/x-hiperfparse/
@@ -520,7 +527,7 @@ def process_article(args, tokenizer_func=tokenize, token_min_len=TOKEN_MIN_LEN,
     (list of str, str, int)
         List of tokens from article, title and page id.
     """
-    text, lemmatize, title, pageid = args
+    text, lemmatize, title, pageid, redirect = args
     # ADJ: keep original text too
     text_original = text
     # ADJ: always search for patterns.
@@ -530,7 +537,7 @@ def process_article(args, tokenizer_func=tokenize, token_min_len=TOKEN_MIN_LEN,
     else:
         result = tokenizer_func(text, token_min_len, token_max_len, lower)
     # ADJ: return patterns and original text
-    return patterns, text_original, result, title, pageid
+    return patterns, text_original, result, title, pageid, redirect
 
 
 def init_to_ignore_interrupt():
@@ -685,8 +692,8 @@ class WikiCorpus(TextCorpus):
 
         tokenization_params = (self.tokenizer_func, self.token_min_len, self.token_max_len, self.lower)
         texts = \
-            ((text, self.lemmatize, title, pageid, tokenization_params)
-             for title, text, pageid
+            ((text, self.lemmatize, title, pageid, redirect, tokenization_params)
+             for title, text, pageid, redirect
              in extract_pages(bz2.BZ2File(self.fname), self.filter_namespaces, self.filter_articles))
         pool = multiprocessing.Pool(self.processes, init_to_ignore_interrupt)
 
@@ -695,8 +702,8 @@ class WikiCorpus(TextCorpus):
             # is dumb and would load the entire input into RAM at once...
             for group in utils.chunkize(texts, chunksize=10 * self.processes, maxsize=1):
                 # ADJ: also return patterns and text
-                for patterns, text, tokens, title, pageid in pool.imap(_process_article, group):
-                    #ADJ: keep track of nr of tokens
+                for patterns, text, tokens, title, pageid, redirect in pool.imap(_process_article, group):
+                    #ADJ: keep track of nr of tokensx
                     nr_tokens = len(tokens)
                     articles_all += 1
                     positions_all += nr_tokens
@@ -708,7 +715,7 @@ class WikiCorpus(TextCorpus):
                     positions += nr_tokens
                     # ADJ: return items of our desire, incl. count of number of tokens
                     if self.metadata:
-                        yield (pageid, title, nr_tokens, patterns, text)
+                        yield (pageid, title, redirect, nr_tokens, patterns, text)
                     else:
                         yield tokens
 
@@ -736,12 +743,12 @@ class WikiCorpus(TextCorpus):
         f = open(file_path, "w", encoding='utf-8')
 
         writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow(('pageid', 'title', 'nr_tokens', 'status', 'articletype', 'lat', 'lon', 'ispartof',
+        writer.writerow(('pageid', 'title', 'redirect', 'nr_tokens', 'status', 'articletype', 'lat', 'lon', 'ispartof',
                          'disambiguation', 'historical'))
 
-        for (pageid, title, nr_tokens, (status, articletype, lat, lon, ispartof, disambiguation, historical),
+        for (pageid, title, redirect, nr_tokens, (status, articletype, lat, lon, ispartof, disambiguation, historical),
              text) in self.get_texts():
-            writer.writerow((pageid, title, nr_tokens, status, articletype, lat, lon, ispartof,
+            writer.writerow((pageid, title, redirect, nr_tokens, status, articletype, lat, lon, ispartof,
                              disambiguation, historical))  # write destination info
 
         f.close()
