@@ -8,3 +8,4 @@ examples/
 .DS_Store
 *.egg-info/
 *.egg
+old-r-scripts/

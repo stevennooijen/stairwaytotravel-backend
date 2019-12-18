@@ -214,7 +214,7 @@ def extract_article_type(s):
 
     match = re.search(pattern, s)
     # return matches if available
-    status, articletype = (match.group(1).strip(), match.group(2).strip()) if match else (None, None)
+    status, articletype = (match.group(1).strip().lower(), match.group(2).strip()).lower() if match else (None, None)
     return status, articletype
 
 
