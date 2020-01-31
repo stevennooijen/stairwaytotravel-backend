@@ -40,6 +40,9 @@ curl http://127.0.0.1:5000/api/2
 # to request the explore endpoint
 curl http://127.0.0.1:5000/api/explore/?continent=AF
 
+# requesting with multiple arguments requires quotes
+curl "http://127.0.0.1:5000/api/explore/?ne_lat=12.34&ne_lng=5.32&sw_lat=10.1&sw_lng=-3.01"
+
 # to do a POST request for email signup
 curl http://127.0.0.1:5000/signup/?email=dude@gmail.com -X POST
 ```
@@ -66,12 +69,15 @@ curl https://stairway-backend.appspot.com/api/2
 
 # to request the explore endpoint
 curl https://stairway-backend.appspot.com/api/explore/?continent=AF
+curl "https://stairway-backend.appspot.com/api/explore/?ne_lat=12.34&ne_lng=5.32&sw_lat=10.1&sw_lng=-3.01"
 ```
 
 Things to consider:
 - Make sure the required dependencies are listed in `requirements.txt`
 - Make sure to use the right gcloud configurations
 `gcloud config configurations activate stairway`
+- Anything in the `api/` folder is uploaded. So this way you can add helper files in for example the `credentials/` 
+and `data/` folders. 
 
 To debug, listen to the logs of the deployed app:
 ```bash
