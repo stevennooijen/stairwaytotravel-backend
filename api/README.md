@@ -31,13 +31,10 @@ And call the API with:
 # to get a random destination
 curl http://127.0.0.1:5000/api/
 
-# add arguments to the request
-curl http://127.0.0.1:5000/api/?continent=AF
-
 # to request a specific destination
 curl http://127.0.0.1:5000/api/2
 
-# to request the explore endpoint
+# to request the explore endpoint and add an argument to the call
 curl http://127.0.0.1:5000/api/explore/?continent=AF
 
 # requesting with multiple arguments requires quotes
