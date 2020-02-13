@@ -16,13 +16,25 @@ osp_importance_mu = 0.547
 osp_importance_std = 0.144
 
 
+def filter_on_geolocation(df_in, ne_lat, ne_lng, sw_lat, sw_lng):
+    return (
+        df_in
+        .loc[lambda df: (df['latitude'] >= sw_lat) & (df['latitude'] < ne_lat)]
+        .loc[lambda df: (df['longitude'] >= sw_lng) & (df['longitude'] < ne_lng)]
+    )
+
+
 class Explore(Resource):
     def __init__(self, **kwargs):
         # smart_engine is a black box dependency
         self.key = kwargs['firestore-key']
         self.db = firestore.Client.from_service_account_json(self.key)
         self.db_collection = kwargs['db-collection']
-        self.df = pd.read_csv('./data/wikivoyage_destinations.csv')
+        self.df = (
+            pd.read_csv('./data/wikivoyage_destinations.csv')
+            .rename(columns={'pageid': 'id', 'title': 'name', 'country': 'country_name',
+                             'articletype': 'dest_wiki_type', 'lat': 'latitude', 'lng': 'longitude'})
+        )
 
     def get(self):
         args = parser.parse_args()
@@ -41,15 +53,16 @@ class Explore(Resource):
             )
         # if geocoordinates provided (uses Pandas!)
         elif args['ne_lat'] and args['ne_lng'] and args['sw_lat'] and args['sw_lng']:
-            subset = (
-                self.df
-                .loc[lambda df: (df['lat'] >= args['sw_lat']) & (df['lat'] < args['ne_lat'])]
-                .loc[lambda df: (df['lng'] >= args['sw_lng']) & (df['lng'] < args['ne_lng'])]
-                .sample(10)
-                .rename(columns={'pageid': 'id', 'title': 'name', 'country': 'country_name',
-                                 'articletype': 'dest_wiki_type', 'lat': 'latitude', 'lng': 'longitude'})
-            )
-            return {"Destinations": subset.to_dict(orient='records')}
+            try:
+                subset = (
+                    self.df
+                    .pipe(filter_on_geolocation, args['ne_lat'], args['ne_lng'], args['sw_lat'], args['sw_lng'])
+                    .sample(frac=1)
+                    .head(10)
+                ).to_dict(orient='records')
+            except ValueError:
+                subset = []
+            return {"Destinations": subset}
 
         # if no arguments provided
         else:
