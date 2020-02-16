@@ -19,8 +19,7 @@ api.add_resource(Destination, '/api/',
                  resource_class_kwargs={'firestore-key': FIRESTORE_KEY, 'db-collection': db_collection})
 api.add_resource(Destination, '/api/<dest_id>', endpoint='dest_ep',
                  resource_class_kwargs={'firestore-key': FIRESTORE_KEY, 'db-collection': db_collection})
-api.add_resource(Explore, '/api/explore/',
-                 resource_class_kwargs={'firestore-key': FIRESTORE_KEY, 'db-collection': db_collection})
+api.add_resource(Explore, '/api/explore/')
 
 # Api for email signup form
 api.add_resource(Signup, '/signup/',

@@ -34,8 +34,8 @@ curl http://127.0.0.1:5000/api/
 # to request a specific destination
 curl http://127.0.0.1:5000/api/2
 
-# to request the explore endpoint and add an argument to the call
-curl http://127.0.0.1:5000/api/explore/?continent=AF
+# requesting the explore endpoint without arguments, yeilds random places
+curl http://127.0.0.1:5000/api/explore/
 
 # requesting with multiple arguments requires quotes
 curl "http://127.0.0.1:5000/api/explore/?ne_lat=12.34&ne_lng=5.32&sw_lat=10.1&sw_lng=-3.01"
