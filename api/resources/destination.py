@@ -8,8 +8,6 @@ class Destination(Resource):
     def __init__(self, **kwargs):
         self.df = (
             pd.read_csv('./data/wikivoyage_destinations.csv')
-            .rename(columns={'pageid': 'id', 'title': 'name', 'country': 'country_name',
-                             'articletype': 'dest_wiki_type', 'lat': 'latitude', 'lng': 'longitude'})
             .set_index('id', drop=False)
             # need to do this to convert numpy int and float to native data types
             .astype('object')

@@ -12,8 +12,8 @@ parser.add_argument('sw_lng', type=float)
 def filter_on_geolocation(df_in, ne_lat, ne_lng, sw_lat, sw_lng):
     return (
         df_in
-        .loc[lambda df: (df['latitude'] >= sw_lat) & (df['latitude'] < ne_lat)]
-        .loc[lambda df: (df['longitude'] >= sw_lng) & (df['longitude'] < ne_lng)]
+        .loc[lambda df: (df['lat'] >= sw_lat) & (df['lat'] < ne_lat)]
+        .loc[lambda df: (df['lng'] >= sw_lng) & (df['lng'] < ne_lng)]
     )
 
 
@@ -21,8 +21,6 @@ class Explore(Resource):
     def __init__(self):
         self.df = (
             pd.read_csv('./data/wikivoyage_destinations.csv')
-            .rename(columns={'pageid': 'id', 'title': 'name', 'country': 'country_name',
-                             'articletype': 'dest_wiki_type', 'lat': 'latitude', 'lng': 'longitude'})
         )
 
     def get(self):
