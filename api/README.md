@@ -45,7 +45,11 @@ curl "http://127.0.0.1:5000/api/explore/?ne_lat=48.9021449&ne_lng=2.4699208&sw_l
 curl "http://127.0.0.1:5000/api/explore/?ne_lat=48.8&ne_lng=2.2&sw_lat=48.82&sw_lng=2.22"
 
 # to do a POST request for email signup
-curl http://127.0.0.1:5000/signup/?email=dude@gmail.com -X POST
+curl "http://127.0.0.1:5000/signup/?email=dude@gmail.com&location=/about" -X POST
+# or check if the user already exists, do a GET request
+curl "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com" -X GET
+# or update a users marketing status with PATCH
+url "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com&status=transactional" -X PATCH
 ```
 
 Flask docs:
