@@ -7,8 +7,10 @@ from resources.signup import Signup
 from resources.member import Member
 
 app = Flask(__name__)
-CORS(app, origins=["https://stairwaytotravel.firebaseapp.com", "https://stairway.travel",
-                   "https://stairwaytotravel-release.web.app", "http://localhost:3000"])
+CORS(app, origins=["https://stairwaytotravel.com",
+                   "https://stairwaytotravel.web.app", "https://stairwaytotravel.firebaseapp.com",
+                   "https://stairwaytotravel-release.web.app", "https://stairwaytotravel-release.firebaseapp.com",
+                   "http://localhost:3000"])
 api = Api(app)
 
 FIRESTORE_KEY = 'credentials/stairway-firestore-key.json'
