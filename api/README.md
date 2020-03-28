@@ -50,6 +50,9 @@ curl "http://127.0.0.1:5000/signup/?email=dude@gmail.com&location=/about" -X POS
 curl "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com" -X GET
 # or update a users marketing status with PATCH
 url "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com&status=transactional" -X PATCH
+
+# a POST request for passing liked destinations to a member event
+url "http://127.0.0.1:5000/member/?email=steven.nooijen@hotmail.com&likes=461&likes=7787" -X POST 
 ```
 
 Flask docs:

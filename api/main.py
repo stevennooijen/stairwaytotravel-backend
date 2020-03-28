@@ -4,6 +4,7 @@ from flask_restful import Api
 from resources.destination import Destination
 from resources.explore import Explore
 from resources.signup import Signup
+from resources.member import Member
 
 app = Flask(__name__)
 CORS(app, origins=["https://stairwaytotravel.firebaseapp.com", "https://stairway.travel",
@@ -23,6 +24,8 @@ api.add_resource(Explore, '/api/explore/')
 
 # Api for email signup form
 api.add_resource(Signup, '/signup/',
+                 resource_class_kwargs={'mailchimp-key': MAILCHIMP_KEY})
+api.add_resource(Member, '/member/',
                  resource_class_kwargs={'mailchimp-key': MAILCHIMP_KEY})
 
 if __name__ == '__main__':
