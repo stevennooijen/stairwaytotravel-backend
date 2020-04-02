@@ -14,11 +14,10 @@ class Member(Resource):
 
     def post(self):
         args = parser.parse_args()
-        print(args['likes'])
 
         payload = {"name": "liked_destinations",
                    "properties": {
-                       "destinations": dumps(args['likes']),
+                       "likes_ids": dumps(args['likes']),
                    }}
         headers = {'content-type': "application/json"}
 

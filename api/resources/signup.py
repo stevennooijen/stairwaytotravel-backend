@@ -1,27 +1,38 @@
+import pandas as pd
 from json import load
 from requests import post, get, patch
 from flask_restful import Resource, reqparse
+from resources.utils.utils import create_html_list_of_likes
 
 # TODO split into 2 separate parsers, one for query and one for payload/body
 # Reason is that you cant set location argument required to True for GET requests
 parser = reqparse.RequestParser()
 parser.add_argument('email', type=str, required=True)
-parser.add_argument('status', type=str, default='subscribed', required=False)
+parser.add_argument('status', type=str, required=False)
 parser.add_argument('location', type=str, required=False)
+parser.add_argument('likes', type=int, required=False, action='append')
 
 
 class Signup(Resource):
     def __init__(self, **kwargs):
         with open(kwargs['mailchimp-key'], 'r') as f:
             self.key = load(f)
+        self.df = (
+            pd.read_csv('./data/wikivoyage_destinations.csv')
+        )
 
     def post(self):
         args = parser.parse_args()
+        if args['likes']:
+            util_html = create_html_list_of_likes(self.df, args['likes'])
+        else:
+            util_html = ''
 
         payload = {'email_address': args['email'],
                    'status': args['status'],
                    'merge_fields': {
-                       "SIGNUP": args['location']
+                       "SIGNUP": args['location'],
+                       "UTIL_HTML": util_html,
                    }}
         headers = {'content-type': "application/json"}
 
@@ -52,11 +63,19 @@ class Signup(Resource):
     def patch(self):
         args = parser.parse_args()
 
-        payload = {
-            "status": args['status']
-        }
-        headers = {'content-type': "application/json"}
+        if args['status']:
+            payload = {
+                "status": args['status']
+            }
+        elif args['likes']:
+            payload = {
+                "merge_fields": {'UTIL_HTML': create_html_list_of_likes(self.df, args['likes'])}
+            }
+        # hacky code. Should return error if one of these arguments is not provided
+        else:
+            payload = None
 
+        headers = {'content-type': "application/json"}
         # Use auth for Basic authentication
         r = patch('https://us3.api.mailchimp.com/3.0/lists/{}/members/{}'.format(self.key['audience_id'],
                                                                                  args['email']),
