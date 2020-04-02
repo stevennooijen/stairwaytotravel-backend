@@ -2,7 +2,7 @@ import pandas as pd
 from json import load
 from requests import post, get, patch
 from flask_restful import Resource, reqparse
-from resources.utils.utils import create_html_list_of_likes
+from resources.utils.utils import create_list_of_likes
 
 # TODO split into 2 separate parsers, one for query and one for payload/body
 # Reason is that you cant set location argument required to True for GET requests
@@ -24,7 +24,7 @@ class Signup(Resource):
     def post(self):
         args = parser.parse_args()
         if args['likes']:
-            util_html = create_html_list_of_likes(self.df, args['likes'])
+            util_html = create_list_of_likes(self.df, args['likes'])
         else:
             util_html = ''
 
@@ -69,7 +69,7 @@ class Signup(Resource):
             }
         elif args['likes']:
             payload = {
-                "merge_fields": {'UTIL_HTML': create_html_list_of_likes(self.df, args['likes'])}
+                "merge_fields": {'UTIL_HTML': create_list_of_likes(self.df, args['likes'])}
             }
         # hacky code. Should return error if one of these arguments is not provided
         else:
