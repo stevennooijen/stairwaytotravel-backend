@@ -82,10 +82,18 @@ class Signup(Resource):
             payload = {
                 "status": args['status']
             }
+        # if likes are provided, the booking arguments should also be there
         elif args['likes']:
-            payload = {
-                "merge_fields": {'UTIL_HTML': create_list_of_likes(self.df, args['likes'])}
+            payload = {"merge_fields": {'UTIL_HTML': create_list_of_likes(self.df, args['likes'])}}
+            user_interests = {
+                'flights': args['flights'],
+                'local_transport': args['local_transport'],
+                'activities': args['activities'],
+                'accommodation': args['accommodation'],
+                'none': args['none'],
             }
+            payload['merge_fields']['BOOKING'] = 'Yes' if args['none'] == False else 'No'
+            payload['interests'] = create_interests_query(user_interests)
         # hacky code. Should return error if one of these arguments is not provided
         else:
             payload = None

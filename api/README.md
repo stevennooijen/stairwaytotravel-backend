@@ -51,7 +51,9 @@ curl "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com&location=/b
 # or check if the user already exists, do a GET request
 curl "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com" -X GET
 # or update a users marketing status with PATCH
-curl "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com&status=transactional" -X PATCH
+curl "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com&status=subscribed" -X PATCH
+# or update liked destinations and booking preferences
+curl "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com&likes=7787&likes=461&activities=true" -X PATCH
 
 # a POST request for passing liked destinations to a member event
 curl "http://127.0.0.1:5000/member/?email=steven.nooijen@hotmail.com&likes=461&likes=7787" -X POST 
