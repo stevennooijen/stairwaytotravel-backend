@@ -56,7 +56,7 @@ curl "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com&status=subs
 curl "http://127.0.0.1:5000/signup/?email=steven.nooijen@hotmail.com&likes=7787&likes=461&activities=true" -X PATCH
 
 # a POST request for passing liked destinations to a member event
-curl "http://127.0.0.1:5000/member/?email=steven.nooijen@hotmail.com&likes=461&likes=7787" -X POST 
+curl "http://127.0.0.1:5000/member/?email=steven.nooijen@hotmail.com&likes=461&likes=7787&none=true" -X POST 
 ```
 
 Flask docs:

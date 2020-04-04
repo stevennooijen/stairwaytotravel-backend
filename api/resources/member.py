@@ -7,7 +7,11 @@ from resources.utils.utils import create_list_of_likes
 parser = reqparse.RequestParser()
 parser.add_argument('email', type=str, required=True)
 parser.add_argument('likes', type=int, required=True, action='append')
-
+parser.add_argument('flights', type=bool, required=False, default=False)
+parser.add_argument('local_transport', type=bool, required=False, default=False)
+parser.add_argument('activities', type=bool, required=False, default=False)
+parser.add_argument('accommodation', type=bool, required=False, default=False)
+parser.add_argument('none', type=bool, required=False, default=False)
 
 class Member(Resource):
     def __init__(self, **kwargs):
@@ -27,7 +31,13 @@ class Member(Resource):
                    "properties": {
                        "likes_ids": dumps(args['likes']),
                        "likes_titles": dumps(likes_text),
+                       'book_flights': 'Yes' if args['flights'] == True else 'No',
+                       'book_local_transport': 'Yes' if args['local_transport'] == True else 'No',
+                       'book_activities': 'Yes' if args['activities'] == True else 'No',
+                       'book_accommodation': 'Yes' if args['accommodation'] == True else 'No',
+                       'book_nothing': 'Yes' if args['none'] == True else 'No',
                    }}
+        print(payload)
         headers = {'content-type': "application/json"}
 
         # Use auth for Basic authentication
