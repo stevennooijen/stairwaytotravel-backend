@@ -22,9 +22,36 @@ member with our platform. Notes can be added to describe for example conversatio
 destinations' to someone's profile. A member can have unlimited events and events can be used to trigger another 
 automation to follow up on the requested booking.    
 
+## Stored information
+
+We store information from the booking process at two levels:
+1. In the **merge fields** that are defined at the user level. We keep track of: 
+    * `status`: whether someone has opted-in for marketing.
+    * `location`: the url path from where the user first signed up.
+    * `util_html`: an 'utility' or helper field that we use to temporarily store html that we generate for the bucket 
+    list confirmation email. This is a bit of a hack: it would have been prettier if Mailchimp would allow us to read 
+    in the liked destination list from a member event instead of from a user's profile (see Trello card with issues on 
+    this topic).
+    * `booking_type`: checkboxes that indicates what type of booking support a user has opted-in for at 
+    their *last* event. 
+    * `boooking_interest`: a radio button that indicates whether the user opted-in for booking support at 
+    their *last* event.
+2. Through **member events**. A user has one event for each time he/she submits the booking form.
+    * `likes_ids`: a list of the liked destination ids.
+    * `likes_titles`: a list of the liked destination titles, for easier readability.
+    * `booking_type`: checkboxes that indicates what type of booking support a user has opted-in for.
+
+## API workflow
+
+When submitting a bucket list flow, the following sequence of emails is kicked-off:
+1. A **post** request to create a user (signup). This includes all fields mentioned under `merge_fields` above. 
+If the user already exists, this returns `null`.
+2. In case the user already exists (a `null` response), a **patch** request is made to update the user's `merge_fields` 
+information.
+3. A **post** request to add a member event with the member event fields mentioned above.
+
 ## Future work
 
-* Create a booking event workflow.
 * Add an opt-in possibility in the booking event workflow, so that more leads are converted into status `'subscribed'`.
 * Create an opt-out possibility, so that members can `'unsubscribe'` from email marketing.
  
