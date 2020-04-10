@@ -10,7 +10,8 @@ from resources.utils.interests import create_interests_query
 parser = reqparse.RequestParser()
 parser.add_argument('email', type=str, required=True)
 parser.add_argument('location', type=str, required=False)
-parser.add_argument('status', type=str, required=False)
+parser.add_argument('status', type=str, required=False, default='subscribed')
+parser.add_argument('marketing', type=bool, required=False)
 parser.add_argument('likes', type=int, required=False, action='append')
 parser.add_argument('flights', type=bool, required=False, default=False)
 parser.add_argument('local_transport', type=bool, required=False, default=False)
@@ -35,6 +36,10 @@ class Signup(Resource):
                    'merge_fields': {
                        "SIGNUP": args['location']
                    }}
+
+        # if opt-in for marketing provided, update that merge field
+        if args['marketing']:
+            payload['merge_fields']['MARKETING'] = 'Yes, sign me up!'
 
         # if likes are provided, the booking arguments should also be there
         if args['likes']:
@@ -78,10 +83,11 @@ class Signup(Resource):
     def patch(self):
         args = parser.parse_args()
 
-        if args['status']:
-            payload = {
-                "status": args['status']
-            }
+        # default status should be 'subscribed'. Otherwise no emails can be sent.
+        payload = {"status": args['status']}
+
+        if args['marketing']:
+            payload = {"merge_fields": {'MARKETING': 'Yes, sign me up!'}}
         # if likes are provided, the booking arguments should also be there
         elif args['likes']:
             payload = {"merge_fields": {'UTIL_HTML': create_list_of_likes(self.df, args['likes'])}}
@@ -94,9 +100,6 @@ class Signup(Resource):
             }
             payload['merge_fields']['BOOKING'] = 'Yes' if args['none'] == False else 'No'
             payload['interests'] = create_interests_query(user_interests)
-        # hacky code. Should return error if one of these arguments is not provided
-        else:
-            payload = None
 
         headers = {'content-type': "application/json"}
         # Use auth for Basic authentication
@@ -104,5 +107,5 @@ class Signup(Resource):
                                                                                  args['email']),
                   json=payload, headers=headers, auth=('randomstring', self.key['api_key']))
 
-        # always succesfull given valid status input, so return doesn't matter
+        # always successful given valid status input, so return doesn't matter
         return r.status_code
