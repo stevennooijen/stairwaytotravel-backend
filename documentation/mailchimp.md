@@ -9,10 +9,16 @@ This document describes what logic has been build with regards to Mailchimp.
 * A form can have **hidden fields**, that a user doesn't see but we can use to fill in metadata about the user. For 
 example, we included a field about page source that indicates whether someone signed up for the first time on the signup
  page or on the bucketlist page.
-* For marketing **status** `'subscribed'`, one has to explicitly opt-in to receive e-mail marketing.
-* That means that if someone provides his/her email for booking purposes on the 'bucketlist' page, he/she did not
-give explicit **consent** for using the email address for marketing. Thus we set this member's status to`'transactional'` 
-until he/she explicitly opts-in on the 'about' page.
+* Mailchimp uses the **status** field to indicate whether someone has opted-in for marketing. `'subscribed'` means 
+someone did. Other statuses are `transactional` and `unsubscribed`. Opt-in can be done through single or double opt-in. 
+* Status `transactional` means that someone can only receive transactional email. This would be for example an order 
+notification. Sadly, Mailchimp does not allow transactional email based on events (which is our case). This would have 
+been our preferred scenario as the bucket list confirmation email could be considered a 'transaction'. 
+* That means we need to set everybody to status `subscribed` in order to email them their bucket list confirmation, and 
+keep a separate field for administrating if someone opts-in for mass email marketing.  
+* So, if someone provides his/her email for booking purposes on the 'bucketlist' page, he/she did not
+give explicit **consent** for using the email address for marketing. Thus we set this member's `MARKETING` merge field 
+to 'no' until he/she explicitly opts-in on the 'about' page.
 * A marketing opt-in triggers an **automation** workflow that sends a welcome email to the newly subscribed member. 
 This is called a **campaign**.
 * Interaction with the campaign is automatically added to a member's **profile**. This stores every interaction of the 
@@ -26,7 +32,8 @@ automation to follow up on the requested booking.
 
 We store information from the booking process at two levels:
 1. In the **merge fields** that are defined at the user level. We keep track of: 
-    * `status`: whether someone has opted-in for marketing.
+    * `status`: needs to be `subscribed` to be able to email them at all. 
+    * `marketing`: a radio button that indicates whether someone opted-in for mass email.
     * `location`: the url path from where the user first signed up.
     * `util_html`: an 'utility' or helper field that we use to temporarily store html that we generate for the bucket 
     list confirmation email. This is a bit of a hack: it would have been prettier if Mailchimp would allow us to read 
