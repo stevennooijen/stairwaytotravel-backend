@@ -9,3 +9,9 @@ def create_list_of_likes(df_in, likes, list_prefix='<ul>', list_postfix='</ul>',
         output = output + create_one_list_item(df_in, like, **kwargs)
     output = output + list_postfix
     return output
+
+def prettify_n_results(n):
+    thresholds = [300, 1000, 5000, 10000, 20000]
+    if n > 300:
+        n = '{:,}'.format((max([result for result in thresholds if n > result]))).replace(',', '.') + '+'
+    return n

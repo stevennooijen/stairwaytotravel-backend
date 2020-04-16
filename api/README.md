@@ -36,12 +36,14 @@ curl http://127.0.0.1:5000/api/33
 
 # requesting the explore endpoint without arguments, yeilds random places
 curl http://127.0.0.1:5000/api/explore/
+curl "http://127.0.0.1:5000/api/explore/?offset=0&n_results=3" -X GET
 
 # requesting with multiple arguments requires quotes
 curl "http://127.0.0.1:5000/api/explore/?ne_lat=12.34&ne_lng=5.32&sw_lat=10.1&sw_lng=-3.01"
 
-# see how errors are handled by querying on a small location
+# see how errors are handled by querying on a small location (yields 3 places)
 curl "http://127.0.0.1:5000/api/explore/?ne_lat=48.9021449&ne_lng=2.4699208&sw_lat=48.815573&sw_lng=2.224199"
+# or a location where nothing is found (yields 0 places)
 curl "http://127.0.0.1:5000/api/explore/?ne_lat=48.8&ne_lng=2.2&sw_lat=48.82&sw_lng=2.22"
 
 # to do a POST request for email signup
