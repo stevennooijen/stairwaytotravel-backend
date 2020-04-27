@@ -43,7 +43,7 @@ class Explore(Resource):
         try:
             places = (
                 subset
-                .sample(frac=1, random_state=args['seed'])
+                .sample(frac=1, random_state=args['seed'], weights='weight')
                 .iloc[args['offset']: args['offset'] + args['n_results']]
             ).to_dict(orient='records')
         # if subset is empty return empty list
