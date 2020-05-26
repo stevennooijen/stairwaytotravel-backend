@@ -17,10 +17,14 @@ class Destination(Resource):
 
         # if dest_id in url, fetch that destination
         if dest_id:
-            doc = self.df.loc[int(dest_id)]
+            try:
+                doc = self.df.loc[int(dest_id)].to_dict()
+            # return null when id not found, or a non-integer id was provided
+            except (KeyError, ValueError) as e:
+                doc = None
 
         # if no dest_id in url, fetch random
         else:
-            doc = self.df.sample(1).iloc[0]
+            doc = self.df.sample(1).iloc[0].to_dict()
 
-        return doc.to_dict()
+        return doc
