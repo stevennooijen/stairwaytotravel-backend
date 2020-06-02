@@ -80,7 +80,7 @@ Then just do:
 gcloud app deploy
 
 # to request a specific destination
-curl https://stairway-backend.appspot.com/api/2
+curl https://stairway-backend.appspot.com/api/867598
 
 # to request the explore endpoint
 curl https://stairway-backend.appspot.com/api/explore/?continent=AF
