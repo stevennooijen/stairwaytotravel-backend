@@ -1,14 +1,17 @@
 import random
 
 import pandas as pd
+from stairway.wikivoyage.preprocessing import scope_minimal_nr_tokens
 
 
 def main(*args):
     options = parse_args(*args)
     df = (
         pd.read_csv(options.input_path)
-        # TODO: remove the rename when the output of preprocessing is adjusted
+        # TODO: remove the rename to the preprocessing piepeline
         .rename(columns={"id": "wiki_id"})
+        # TODO: remove the scoping to the preprocessing pipeline
+        .pipe(scope_minimal_nr_tokens)
         # add features
         .pipe(add_random_id).pipe(add_sample_weight)
     )
@@ -142,7 +145,7 @@ def prepare_for_api(df_in):
         # keep minimal subset of columns
         [columns]
         # set index for fast lookup
-        .set_index("id", drop=False)
+        # .set_index("id", drop=False)
         # need to do this to convert numpy int and float to native data types
         .astype("object")
     )
