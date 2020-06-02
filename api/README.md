@@ -31,8 +31,8 @@ And call the API with:
 # to get a random destination
 curl http://127.0.0.1:5000/api/
 
-# to request a specific destination: 33 -> Aachen
-curl http://127.0.0.1:5000/api/33
+# to request a specific destination: 867598 -> Aachen
+curl http://127.0.0.1:5000/api/867598
 
 # requesting the explore endpoint without arguments, yeilds random places
 curl http://127.0.0.1:5000/api/explore/
