@@ -1,5 +1,48 @@
 import random
+
 import pandas as pd
+
+
+def main(*args):
+    options = parse_args(*args)
+    df = (
+        pd.read_csv(options.input_path)
+        # TODO: remove the rename when the output of preprocessing is adjusted
+        .rename(columns={"id": "wiki_id"})
+        # add features
+        .pipe(add_random_id).pipe(add_sample_weight)
+    )
+    df.to_csv(options.output_path, index=False)
+    df.pipe(prepare_for_api).to_csv(options.api_path, index=False)
+
+
+def parse_args(*args):
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser(description="Create features for Wikivoyage data.")
+    parser.add_argument(
+        "-i",
+        "--input-path",
+        dest="input_path",
+        default="data/wikivoyage/processed/wikivoyage_destinations.csv",
+        help="Path to the input file.",
+    )
+    parser.add_argument(
+        "-o",
+        "--output-path",
+        dest="output_path",
+        default="data/wikivoyage/enriched/wikivoyage_destinations.csv",
+        help="Path to the output file for future reference.",
+    )
+    parser.add_argument(
+        "-a",
+        "--api-path",
+        dest="api_path",
+        default="api/data/wikivoyage_destinations.csv",
+        help="Path to the output file for the API.",
+    )
+
+    return parser.parse_args(args=args)
 
 
 def create_id_mapping(nr_of_digits=6, seed=123):
@@ -40,7 +83,7 @@ def add_random_id(df_in, id_column_to_map="wiki_id"):
     Returns
     -------
     out: DataFrame
-        DataFrame with a new "id" column
+        DataFrame with a new "id" column.
     """
     mapping = create_id_mapping()
     return (
@@ -48,3 +91,64 @@ def add_random_id(df_in, id_column_to_map="wiki_id"):
         .join(mapping)
         .reset_index(drop=True)
     )
+
+
+def add_sample_weight(df_in, power_factor=1.5):
+    """
+    Add a column with weights for biased sampling towards places with a higher number of tokens.
+
+    Parameters
+    ----------
+    df_in: DataFrame
+        Input DataFrame with a "nr_tokens" column containing the number of tokens in a destination text.
+    power_factor: float
+        Value used for inflating the nr_tokens value to get to the desired sampling weight.
+
+    Returns
+    -------
+    out: DataFrame
+        DataFrame with a "weight" column containing the sampling weights.
+    """
+    return df_in.assign(weight=lambda df: (df["nr_tokens"] ** power_factor).astype(int))
+
+
+def prepare_for_api(df_in):
+    """
+    Prepares the data set to be used in the Flask API.
+
+    Parameters
+    ----------
+    df_in: DataFrame
+        Input data containing all features for the API.
+
+    Returns
+    -------
+    out: DataFrame
+        Prepared DataFrame to be used in the API data folder.
+    """
+    columns = [
+        "id",
+        "wiki_id",
+        "name",
+        "status",
+        "type",
+        "lat",
+        "lng",
+        "country",
+        "weight",
+    ]
+    return (
+        df_in
+        # keep minimal subset of columns
+        [columns]
+        # set index for fast lookup
+        .set_index("id", drop=False)
+        # need to do this to convert numpy int and float to native data types
+        .astype("object")
+    )
+
+
+if __name__ == "__main__":
+    import sys
+
+    main(*sys.argv[1:])

@@ -25,9 +25,15 @@ data_dir = `data/wikivoyage/`
     - notebooks: 
         - `sampling-weight.ipynb`
     
-## Running the full pipeline
+## Running the pipeline
 
 **TODO:** Create a main.py that runs all above steps in one go.
+
+For now, only the feature engineering pipeline can be run from the command line:
+
+```bash
+python src/stairway/wikivoyage/feature_engineering.py 
+```
 
 ## API usage
 
