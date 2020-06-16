@@ -77,8 +77,13 @@ All you need is:
 Then just do:
 
 ```bash
-gcloud app deploy
+gcloud app deploy --version=production
+```
 
+The `--version` flag will make sure to replace an existing instance that shares that same "version".
+
+With the app running, you can query it as follows:`
+```bash
 # to request a specific destination
 curl https://stairway-backend.appspot.com/api/867598
 
