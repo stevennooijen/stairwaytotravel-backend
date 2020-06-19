@@ -1,5 +1,6 @@
 # folders
 data/
+!notebooks/data
 credentials/
 .ipynb_checkpoints/
 __pycache__/
