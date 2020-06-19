@@ -4,6 +4,8 @@ from flask_restful import Resource, reqparse
 
 parser = reqparse.RequestParser()
 
+N_FEATURES = 5
+
 
 class Destination(Resource):
     def __init__(self, **kwargs):
@@ -14,6 +16,7 @@ class Destination(Resource):
             # need to do this to convert numpy int and float to native data types
             .astype("object")
         )
+        self.df_features = pd.read_csv("./data/wikivoyage_features.csv").set_index("id")
 
     def get(self, dest_id=None):
 
@@ -28,5 +31,12 @@ class Destination(Resource):
         # if no dest_id in url, fetch random
         else:
             doc = self.df.sample(1).iloc[0].to_dict()
+
+        # add top X features
+        doc["features"] = (
+            self.df_features.loc[doc["id"]]
+            .sort_values(ascending=False)[:N_FEATURES]
+            .index.tolist()
+        )
 
         return doc
