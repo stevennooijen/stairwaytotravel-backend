@@ -1,6 +1,6 @@
 import pandas as pd
 from flask_restful import Resource, reqparse
-from resources.utils.selection import filter_on_geolocation
+from resources.utils.selection import filter_on_geolocation, select_top_features
 from resources.utils.utils import prettify_n_results
 
 parser = reqparse.RequestParser()
@@ -17,6 +17,7 @@ parser.add_argument("sw_lng", type=float)
 class Explore(Resource):
     def __init__(self):
         self.df = pd.read_csv("./data/wikivoyage_destinations.csv")
+        self.df_features = pd.read_csv("./data/wikivoyage_features.csv").set_index("id")
 
     def get(self):
         args = parser.parse_args()
@@ -50,11 +51,15 @@ class Explore(Resource):
 
         # select records to output from subset
         try:
-            places = (
-                subset.sample(frac=1, random_state=args["seed"], weights="weight").iloc[
-                    args["offset"] : args["offset"] + args["n_results"]
-                ]
-            ).to_dict(orient="records")
+            places = subset.sample(
+                frac=1, random_state=args["seed"], weights="weight"
+            ).iloc[args["offset"] : args["offset"] + args["n_results"]]
+            # add top X features
+            places["features"] = places["id"].apply(
+                lambda x: select_top_features(x, self.df_features)
+            )
+            # return as dict
+            places = places.to_dict(orient="records")
         # if subset is empty return empty list
         except ValueError:
             places = []

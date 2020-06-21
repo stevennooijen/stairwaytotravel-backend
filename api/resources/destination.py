@@ -1,10 +1,9 @@
 import pandas as pd
 
 from flask_restful import Resource, reqparse
+from resources.utils.selection import select_top_features
 
 parser = reqparse.RequestParser()
-
-N_FEATURES = 5
 
 
 class Destination(Resource):
@@ -33,10 +32,6 @@ class Destination(Resource):
             doc = self.df.sample(1).iloc[0].to_dict()
 
         # add top X features
-        doc["features"] = (
-            self.df_features.loc[doc["id"]]
-            .sort_values(ascending=False)[:N_FEATURES]
-            .index.tolist()
-        )
+        doc["features"] = select_top_features(doc["id"], self.df_features)
 
         return doc
