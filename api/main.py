@@ -20,27 +20,14 @@ CORS(
 )
 api = Api(app)
 
-FIRESTORE_KEY = "credentials/stairway-firestore-key.json"
 MAILCHIMP_KEY = "credentials/mailchimp-key.json"
-db_collection = "destinations"
 
 # Api for fetching destinations
 api.add_resource(
-    Destination,
-    "/api/",
-    resource_class_kwargs={
-        "firestore-key": FIRESTORE_KEY,
-        "db-collection": db_collection,
-    },
+    Destination, "/api/",
 )
 api.add_resource(
-    Destination,
-    "/api/<dest_id>",
-    endpoint="dest_ep",
-    resource_class_kwargs={
-        "firestore-key": FIRESTORE_KEY,
-        "db-collection": db_collection,
-    },
+    Destination, "/api/<dest_id>", endpoint="dest_ep",
 )
 api.add_resource(Explore, "/api/explore/")
 

@@ -56,6 +56,8 @@ def select_features_with_profiles(
     """
     Get top_x features for a place, keeping feature profiles into account.
 
+    If feature profiles is an empty list, return most relevant features for the place.
+
     Parameters
     ----------
     place_id: int
