@@ -1,11 +1,14 @@
 import pandas as pd
 from flask_restful import Resource, reqparse
-from resources.utils.selection import filter_on_geolocation
-from resources.utils.utils import prettify_n_results
 from resources.utils.features import (
     select_features_with_profiles,
-    select_feature_columns_with_profiles,
+    sort_places_by_profiles,
 )
+from resources.utils.selection import filter_on_geolocation
+from resources.utils.utils import prettify_n_results
+
+PROFILE_WEIGHT_FACTOR = 1.5
+
 
 parser = reqparse.RequestParser()
 parser.add_argument("seed", type=int, default=1234)
@@ -57,19 +60,16 @@ class Explore(Resource):
                 args["sw_lng"],
             )
 
-        # select records to output from subset
+        # select order of records to output from subset
         try:
             if args["profiles"]:
-                features_inscope = select_feature_columns_with_profiles(
-                    args["profiles"], self.df_feature_types
+                places = subset.copy().pipe(
+                    sort_places_by_profiles,
+                    args["profiles"],
+                    self.df_features,
+                    self.df_feature_types,
+                    profile_weight_factor=PROFILE_WEIGHT_FACTOR,
                 )
-                ordering = (
-                    self.df_features.loc[subset["id"].tolist()][features_inscope]
-                    .sum(axis=1)
-                    .sort_values(ascending=False)
-                    .index.values
-                )
-                places = subset.loc[ordering]
             else:
                 places = subset.sample(
                     frac=1, random_state=args["seed"], weights="weight"

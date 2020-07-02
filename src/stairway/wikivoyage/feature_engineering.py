@@ -2,6 +2,21 @@ import random
 
 import pandas as pd
 from stairway.wikivoyage.preprocessing import scope_minimal_nr_tokens
+from stairway.utils.utils import add_normalized_column
+
+
+API_COLUMNS = [
+    "id",
+    "wiki_id",
+    "name",
+    "status",
+    "type",
+    "lat",
+    "lng",
+    "country",
+    "weight",
+    "nr_tokens_norm",
+]
 
 
 def main(*args):
@@ -13,7 +28,9 @@ def main(*args):
         # TODO: remove the scoping to the preprocessing pipeline
         .pipe(scope_minimal_nr_tokens)
         # add features
-        .pipe(add_random_id).pipe(add_sample_weight)
+        .pipe(add_random_id)
+        .pipe(add_sample_weight)
+        .pipe(add_normalized_column, "nr_tokens")
     )
     df.to_csv(options.output_path, index=False)
     df.pipe(prepare_for_api).to_csv(options.api_path, index=False)
@@ -129,21 +146,11 @@ def prepare_for_api(df_in):
     out: DataFrame
         Prepared DataFrame to be used in the API data folder.
     """
-    columns = [
-        "id",
-        "wiki_id",
-        "name",
-        "status",
-        "type",
-        "lat",
-        "lng",
-        "country",
-        "weight",
-    ]
+
     return (
         df_in
         # keep minimal subset of columns
-        [columns]
+        [API_COLUMNS]
         # set index for fast lookup
         # .set_index("id", drop=False)
         # need to do this to convert numpy int and float to native data types
