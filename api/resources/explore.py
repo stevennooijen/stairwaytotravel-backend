@@ -2,13 +2,24 @@ import pandas as pd
 from flask_restful import Resource, reqparse
 from resources.utils.features import (
     select_features_with_profiles,
-    sort_places_by_profiles,
+    filter_and_sort_places_by_profiles,
 )
 from resources.utils.selection import filter_on_geolocation
 from resources.utils.utils import prettify_n_results
 
 PROFILE_WEIGHT_FACTOR = 1.5
-
+PROFILE_WEIGHT_THRESHOLD = 1
+OUTPUT_COLUMNS = [
+    "id",
+    "wiki_id",
+    "name",
+    "status",
+    "type",
+    "lat",
+    "lng",
+    "country",
+    "features",
+]
 
 parser = reqparse.RequestParser()
 parser.add_argument("seed", type=int, default=1234)
@@ -59,22 +70,23 @@ class Explore(Resource):
                 args["sw_lat"],
                 args["sw_lng"],
             )
+        # if feature profiles provided, filter and sort on that
+        if args["profiles"]:
+            subset = subset.pipe(
+                filter_and_sort_places_by_profiles,
+                args["profiles"],
+                self.df_features,
+                self.df_feature_types,
+                profile_weight_factor=PROFILE_WEIGHT_FACTOR,
+                profile_weight_threshold=PROFILE_WEIGHT_THRESHOLD,
+            )
+        # if not, sort using the number of tokens weight (if places in subset at all)
+        elif len(subset) > 0:
+            subset = subset.sample(frac=1, random_state=args["seed"], weights="weight")
 
-        # select order of records to output from subset
+        # apply offset if places found
         try:
-            if args["profiles"]:
-                places = subset.copy().pipe(
-                    sort_places_by_profiles,
-                    args["profiles"],
-                    self.df_features,
-                    self.df_feature_types,
-                    profile_weight_factor=PROFILE_WEIGHT_FACTOR,
-                )
-            else:
-                places = subset.sample(
-                    frac=1, random_state=args["seed"], weights="weight"
-                )
-            places = places.iloc[args["offset"] : args["offset"] + args["n_results"]]
+            places = subset.iloc[args["offset"] : args["offset"] + args["n_results"]]
 
             # add top X features
             places["features"] = places["id"].apply(
@@ -83,8 +95,8 @@ class Explore(Resource):
                 )
             )
 
-            # return as dict
-            places = places.to_dict(orient="records")
+            # select columns and return as dict
+            places = places[OUTPUT_COLUMNS].to_dict(orient="records")
         # if subset is empty return empty list
         except ValueError:
             places = []

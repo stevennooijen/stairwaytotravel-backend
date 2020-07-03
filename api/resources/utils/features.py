@@ -123,8 +123,13 @@ def add_sorting_weight_by_profiles(df_places, profiles, df_features, df_feature_
     return df_places
 
 
-def sort_places_by_profiles(
-    df_places, profiles, df_features, df_feature_types, profile_weight_factor=1.5
+def filter_and_sort_places_by_profiles(
+    df_places,
+    profiles,
+    df_features,
+    df_feature_types,
+    profile_weight_factor=1.5,
+    profile_weight_threshold=1,
 ):
     """
     Sort place data using activity profiles and the number of tokens for a place.
@@ -143,6 +148,9 @@ def sort_places_by_profiles(
         Factor to multiply the normalized profile weight with before adding it
         to the number of tokens weight. Higher means a higher ranking of places
         that match the selected feature profiles.
+    profile_weight_threshold: float
+        Minimum threshold for the profiles weight (before normalization) in  order
+        for a place to be kept in the output result.
 
     Returns
     -------
@@ -154,6 +162,8 @@ def sort_places_by_profiles(
             add_sorting_weight_by_profiles, profiles, df_features, df_feature_types,
         )
         .pipe(add_normalized_column, "profile_weight")
+        # keep only places with a profile weight higher than the threshold
+        .loc[lambda df: df["profile_weight"] > profile_weight_threshold]
         # create sorting weight as a combination of token and profiles weight
         .assign(
             sort_weight=lambda df: df["nr_tokens_norm"]
