@@ -25,8 +25,9 @@ data_dir = `data/wikivoyage/`
     - notebooks: 
         - `sampling-weight.ipynb`
         - `activities-bm25.ipynb`
-            - input: takes many inputs, need to put this in logical order!
+            - input: `feature_terms.csv` and `feature_profiles.csv`
             - output: `enriched/wikivoyage_features.csv`
+                - a copy is saved to the flak api directory (`api/data/`).
             - **TODO:** convert to module.
     
 ## Running the pipeline
