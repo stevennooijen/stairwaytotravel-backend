@@ -42,6 +42,9 @@ curl "http://127.0.0.1:5000/api/explore/?offset=0&n_results=3" -X GET
 curl "http://127.0.0.1:5000/api/explore/?ne_lat=12.34&ne_lng=5.32&sw_lat=10.1&sw_lng=-3.01"
 curl "http://127.0.0.1:5000/api/explore/?offset=0&n_results=3&country=Netherlands" -X GET
 
+# example request with feature profile 'beach'
+curl "http://127.0.0.1:5000/api/explore/?seed=40953&n_results=12&offset=0&ne_lat=52.4311573&ne_lng=5.0791619&sw_lat=52.278174&sw_lng=4.7287589&profiles=beach" -X GET
+
 # see how errors are handled by querying on a small location (yields 3 places)
 curl "http://127.0.0.1:5000/api/explore/?ne_lat=48.9021449&ne_lng=2.4699208&sw_lat=48.815573&sw_lng=2.224199"
 # or a location where nothing is found (yields 0 places)
