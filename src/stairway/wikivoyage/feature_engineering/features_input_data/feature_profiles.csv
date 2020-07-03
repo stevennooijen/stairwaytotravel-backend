@@ -35,7 +35,7 @@ feature_id,feature_name,feature_column,feature_type,nature,city,active,culture,r
 34,Historic villages,historic_villages,Scenery,0,1,0,1,0,1,0
 35,Horseback riding,horseback_riding,Scenery,1,1,1,0,0,0,0
 36,Hot springs/geysers,hot_springs_geysers,Scenery,1,0,0,0,1,0,0
-37,Islands,islands,Scenery,1,0,1,1,1,1,1
+37,Islands,islands,Scenery,1,0,1,1,1,1,0
 38,Lakes,lakes,Scenery,1,0,1,1,1,1,0
 39,Landmarks,landmarks,Scenery,1,0,1,1,1,0,0
 40,Viewpoints,viewpoints,Scenery,1,1,1,1,1,0,0
