@@ -86,15 +86,15 @@ class Explore(Resource):
 
         # apply offset if places found
         try:
-            places = subset.iloc[args["offset"] : args["offset"] + args["n_results"]]
-
+            places = subset.iloc[
+                args["offset"] : args["offset"] + args["n_results"]
+            ].copy()
             # add top X features
             places["features"] = places["id"].apply(
                 lambda x: select_features_with_profiles(
                     x, args["profiles"], self.df_features, self.df_feature_types
                 )
             )
-
             # select columns and return as dict
             places = places[OUTPUT_COLUMNS].to_dict(orient="records")
         # if subset is empty return empty list
