@@ -1,4 +1,3 @@
-import pandas as pd
 from json import load
 from requests import post, get, patch
 from flask_restful import Resource, reqparse
@@ -28,7 +27,7 @@ class Signup(Resource):
     def __init__(self, **kwargs):
         with open(kwargs["mailchimp-key"], "r") as f:
             self.key = load(f)
-        self.df = pd.read_csv("./data/wikivoyage_destinations.csv")
+        self.df = kwargs["df"]
 
     def post(self):
         args = parser.parse_args()
