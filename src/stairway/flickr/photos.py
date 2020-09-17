@@ -1,6 +1,6 @@
 from typing import Dict, Union, List
 import requests
-from pandas import Series
+from pandas import Series, DataFrame
 
 IMAGES_PER_PAGE = 5
 LICENSES = "4,5,7,8,9,10"
@@ -133,11 +133,17 @@ def get_flickr_images(
     return R.json()["photos"]
 
 
-def get_image_url(item: Union[Dict, Series], suffix: str = "_b") -> str:
-    """Construct url for downloading the image. Add suffix '_b' for large size."""
+def get_image_url(item: Union[Dict, Series, DataFrame], suffix: str = "_b") -> str:
+    """
+    Construct url for downloading the image. Add suffix '_b' for large size.
+    """
     return (
         "https://farm"
-        + str(item["farm"])
+        + (
+            item["farm"].astype(str)
+            if isinstance(item, DataFrame)
+            else str(item["farm"])
+        )
         + ".staticflickr.com/"
         + item["server"]
         + "/"
