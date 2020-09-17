@@ -1,7 +1,7 @@
 from stairway.flickr.people import parse_flickr_people_info
 
 
-def test_parse_flickr_people_info():
+def test_parse_flickr_people_info() -> None:
     """
     Expect correct creation of attribution url.
     """

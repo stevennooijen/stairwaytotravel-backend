@@ -1,7 +1,9 @@
+from typing import Dict, Union, List
 import requests
+from pandas import Series
 
 IMAGES_PER_PAGE = 5
-API_BASE = "https://api.flickr.com/services/rest/?method=flickr.photos.search"
+LICENSES = "4,5,7,8,9,10"
 FORBIDDEN_WORDS = [
     "police",
     "car",
@@ -99,12 +101,15 @@ FORBIDDEN_WORDS = [
 
 
 def get_flickr_images(
-    search_string,
-    api_key,
-    images_per_page=IMAGES_PER_PAGE,
-    forbidden_words=FORBIDDEN_WORDS,
-):
-    """Call on flickr.photos.search. Returns json list of images satisfying the params."""
+    search_string: str,
+    api_key: str,
+    images_per_page: int = IMAGES_PER_PAGE,
+    forbidden_words: List[str] = FORBIDDEN_WORDS,
+    license: str = LICENSES,
+) -> Dict:
+    """
+    Call on flickr.photos.search API. Returns json list of images satisfying the params.
+    """
     S = requests.Session()
 
     params = {
@@ -114,23 +119,25 @@ def get_flickr_images(
         "per_page": images_per_page,
         "sort": "interestingness-desc",
         "safe_search": 1,
-        "license": "4,5,7,8,9,10",
+        "license": license,
         "content_type": 1,
         "media": "photos",
         "extras": "owner_name,url_o,original_format",
         "text": search_string + " -" + " -".join(forbidden_words),
     }
 
-    R = S.get(url=API_BASE, params=params)
+    R = S.get(
+        url="https://api.flickr.com/services/rest/?method=flickr.photos.search",
+        params=params,
+    )
     return R.json()["photos"]
 
 
-def get_image_url(item, suffix="_b"):
+def get_image_url(item: Union[Dict, Series], suffix: str = "_b") -> str:
     """Construct url for downloading the image. Add suffix '_b' for large size."""
     return (
         "https://farm"
-        + item["farm"].astype(str)  # hacky to make it work for pandas df assign
-        # + str(item['farm'])
+        + str(item["farm"])
         + ".staticflickr.com/"
         + item["server"]
         + "/"
@@ -142,6 +149,8 @@ def get_image_url(item, suffix="_b"):
     )
 
 
-def get_attribution_url(item):
-    """Assemble an attribution link from fetched photos.search result."""
+def get_attribution_url(item: Union[Dict, Series]) -> str:
+    """
+    Assemble an attribution link from fetched photos.search result.
+    """
     return "https://www.flickr.com/photos/" + item["owner"] + "/" + item["id"]
