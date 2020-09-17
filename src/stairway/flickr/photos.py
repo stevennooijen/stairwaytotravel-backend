@@ -133,7 +133,7 @@ def get_flickr_images(
     return R.json()["photos"]
 
 
-def get_image_url(item: Union[Dict, Series, DataFrame], suffix: str = "_b") -> str:
+def create_image_url(item: Union[Dict, Series, DataFrame], suffix: str = "_b") -> str:
     """
     Construct url for downloading the image. Add suffix '_b' for large size.
     """
@@ -155,7 +155,7 @@ def get_image_url(item: Union[Dict, Series, DataFrame], suffix: str = "_b") -> s
     )
 
 
-def get_attribution_url(item: Union[Dict, Series]) -> str:
+def create_attribution_url(item: Union[Dict, Series]) -> str:
     """
     Assemble an attribution link from fetched photos.search result.
     """
