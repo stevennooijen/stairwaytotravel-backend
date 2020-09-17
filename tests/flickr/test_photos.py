@@ -1,4 +1,4 @@
-from stairway.flickr.photo_search import get_attribution_url
+from stairway.flickr.photos import get_attribution_url
 
 
 def test_get_attribution_url():
