@@ -14,7 +14,8 @@ load_dotenv()
 
 FLICKR_KEY = os.getenv("FLICKR_KEY")
 TOP_X_IMAGES = 20
-STEP_SIZE = 700
+STEP_SIZE = 100
+SLEEP_SECONDS = 60 * 10
 
 
 def main(*args):
@@ -42,7 +43,7 @@ def main(*args):
             df_chunck.to_csv(options.output_path, mode="a", header=False, index=False)
         print(f"Done processing places: {i}-{i + STEP_SIZE}")
         print("Sleeping ... zzz")
-        time.sleep(60 * 60)
+        time.sleep(SLEEP_SECONDS)
 
 
 def parse_args(*args):
