@@ -10,3 +10,4 @@ examples/
 *.egg-info/
 *.egg
 old-r-scripts/
+.env
