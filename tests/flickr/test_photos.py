@@ -1,6 +1,5 @@
 from typing import Dict, Union
 from pandas import Series, DataFrame
-from pandas._testing import assert_series_equal
 import pytest
 
 from stairway.flickr.photos import create_attribution_url, create_image_url
