@@ -1,7 +1,7 @@
 from typing import Dict
 
 import pytest
-from stairway.flickr.people import parse_flickr_people_info
+from stairway.apis.flickr.people import parse_flickr_people_info
 
 
 @pytest.mark.parametrize(

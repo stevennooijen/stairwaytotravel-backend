@@ -2,7 +2,7 @@ from typing import Dict, Union
 from pandas import Series, DataFrame
 import pytest
 
-from stairway.flickr.photos import create_attribution_url, create_image_url
+from stairway.apis.flickr.photos import create_attribution_url, create_image_url
 
 
 def test_get_attribution_url() -> None:
