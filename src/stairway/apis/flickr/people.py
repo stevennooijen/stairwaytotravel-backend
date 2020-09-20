@@ -32,6 +32,7 @@ def parse_flickr_people_info(xml_string: str) -> Dict:
         for field in ["username", "realname", "profileurl", "location"]
         if person.find(field) is not None
     }
-    people_info["path_alias"] = response_xml.find("person").get("path_alias")
+    people_info["nsid"] = person.get("nsid")
+    people_info["path_alias"] = person.get("path_alias")
 
     return people_info
