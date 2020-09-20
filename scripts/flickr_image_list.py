@@ -14,6 +14,7 @@ load_dotenv()
 
 FLICKR_KEY = os.getenv("FLICKR_KEY")
 TOP_X_IMAGES = 20
+# Take into account Flickr API usage limit of max 3600 calls an hour
 STEP_SIZE = 100
 SLEEP_SECONDS = 60 * 10
 
@@ -44,6 +45,8 @@ def main(*args):
         print(f"Done processing places: {i}-{i + STEP_SIZE}")
         print("Sleeping ... zzz")
         time.sleep(SLEEP_SECONDS)
+
+    print("Done!")
 
 
 def parse_args(*args):
