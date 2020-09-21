@@ -27,12 +27,15 @@ def parse_flickr_people_info(xml_string: str) -> Dict:
     response_xml = ET.fromstring(xml_string)
     person = response_xml.find("person")
 
-    people_info = {
-        field: person.find(field).text
-        for field in ["username", "realname", "profileurl", "location"]
-        if person.find(field) is not None
-    }
-    people_info["nsid"] = person.get("nsid")
-    people_info["path_alias"] = person.get("path_alias")
+    if person:
+        people_info = {
+            field: person.find(field).text
+            for field in ["username", "realname", "profileurl", "location"]
+            if person.find(field) is not None
+        }
+        people_info["nsid"] = person.get("nsid")
+        people_info["path_alias"] = person.get("path_alias")
+    else:
+        people_info = {}
 
     return people_info

@@ -28,6 +28,11 @@ from stairway.apis.flickr.people import parse_flickr_people_info
                 "path_alias": "",
             },
         ),
+        (
+            # removed user
+            '<?xml version="1.0" encoding="utf-8" ?>\n<rsp stat="fail">\n\t<err code="5" msg="User deleted" />\n</rsp>\n',
+            {},
+        ),
     ],
 )
 def test_parse_flickr_people_info(xml: str, expected: Dict) -> None:

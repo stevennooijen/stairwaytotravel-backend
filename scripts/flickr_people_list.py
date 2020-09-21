@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 
@@ -23,7 +24,7 @@ def main(*args):
     print(f"Number of authors to process: {len(authors)}")
 
     # Process chuncked up input df with a sleep timer of an hour
-    for i in range(0, len(authors), STEP_SIZE):
+    for i in range(int(options.start_index), len(authors), STEP_SIZE):
         print(f"Now doing authors: {i}-{i + STEP_SIZE}")
         authors_chunck = authors.iloc[i : i + STEP_SIZE]
         authors_chunck = process_chunck(authors_chunck)
@@ -60,17 +61,31 @@ def parse_args(*args):
         default="data/flickr/flickr_people_list.csv",
         help="Path to the output file.",
     )
+    parser.add_argument(
+        "-s",
+        "--start-index",
+        dest="start_index",
+        default=0,
+        help="Index of first place to start processing",
+    )
 
     return parser.parse_args(args=args)
 
 
+def try_processing(author):
+    try:
+        return parse_flickr_people_info(
+            get_flickr_people_info(author, api_key=FLICKR_KEY)
+        )
+    except:
+        logging.exception(f"Fail at author {author}")
+        pass
+
+
 def process_chunck(authors):
-    return pd.DataFrame(
-        [
-            parse_flickr_people_info(get_flickr_people_info(author, api_key=FLICKR_KEY))
-            for author in authors
-        ]
-    )[["nsid", "username", "realname", "path_alias", "location", "profileurl"]]
+    return pd.DataFrame([try_processing(author) for author in authors])[
+        ["nsid", "username", "realname", "path_alias", "location", "profileurl"]
+    ]
 
 
 if __name__ == "__main__":
