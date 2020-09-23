@@ -22,7 +22,7 @@ def main(*args):
 
     # Process chuncked up input df with a sleep timer of an hour
     for batch in range(
-        options.start_index, len(page_ids), BATCH_SIZE * PAGES_PER_QUERY
+        int(options.start_index), len(page_ids), BATCH_SIZE * PAGES_PER_QUERY
     ):
         print(f"Now doing batch: {batch}-{batch + BATCH_SIZE * PAGES_PER_QUERY}")
 
@@ -35,6 +35,7 @@ def main(*args):
                 for query in range(
                     batch, batch + BATCH_SIZE * PAGES_PER_QUERY, PAGES_PER_QUERY
                 )
+                if query < len(page_ids)
             ]
         )
 
