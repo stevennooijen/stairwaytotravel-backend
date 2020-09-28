@@ -1,6 +1,8 @@
+import logging
 import time
 
 import pandas as pd
+from PIL import UnidentifiedImageError
 from stairway.instagram.image import create_instagram_image
 
 TOP_X_IMAGES = 5
@@ -70,9 +72,25 @@ def parse_args(*args):
 
 
 def process_row(row):
-    create_instagram_image(
-        row["url_b"], row["name"], row["country"], row["output_path"]
-    )
+    try:
+        create_instagram_image(
+            row["url_b"], row["name"], row["country"], row["output_path"]
+        )
+    except UnidentifiedImageError:
+        logging.warning(
+            f"Failed at image {row['stairway_id']}-{row['index']} with url_b: {row['url_b']}"
+        )
+        try:
+            create_instagram_image(
+                row["url_o"], row["name"], row["country"], row["output_path"]
+            )
+        except:
+            logging.exception(
+                logging.warning(
+                    f"Failed at image {row['stairway_id']}-{row['index']} with url_o: {row['url_o']}"
+                )
+            )
+            pass
 
 
 if __name__ == "__main__":
