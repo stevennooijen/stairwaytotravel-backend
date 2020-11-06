@@ -10,3 +10,4 @@ dependencies:
     - google-cloud-firestore==0.31.0
     - flask-restful==0.3.7
     - Flask-Cors==3.0.9
+    - Pillow==8.0.1
