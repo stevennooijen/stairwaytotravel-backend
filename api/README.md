@@ -50,6 +50,9 @@ curl "http://127.0.0.1:5000/api/explore/?ne_lat=48.9021449&ne_lng=2.4699208&sw_l
 # or a location where nothing is found (yields 0 places)
 curl "http://127.0.0.1:5000/api/explore/?ne_lat=48.8&ne_lng=2.2&sw_lat=48.82&sw_lng=2.22"
 
+# Request nearby destinations: 662248 = 's-Hertogenbosch
+curl http://127.0.0.1:5000/api/nearby/662248
+
 # to do a POST request for email signup
 curl "http://127.0.0.1:5000/signup/?email=dude@gmail.com&location=/about&status=subscribed" -X POST
 # to do a POST including liked destinations and booking preferences

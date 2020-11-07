@@ -7,7 +7,8 @@ parser.add_argument("profiles", type=str, action="append", default=[])
 
 class Destination(Resource):
     def __init__(self, **kwargs):
-        self.df = kwargs["df"]
+        # TODO: avoid converting type to object to make it JSON serializable
+        self.df = kwargs["df"].astype("object")
         self.df_features = kwargs["df_features"]
         self.df_feature_types = kwargs["df_feature_types"]
 
