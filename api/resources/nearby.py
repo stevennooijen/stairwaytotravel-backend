@@ -20,15 +20,16 @@ class Nearby(Resource):
         if place_id in self.df.index:
             places = (
                 self.df
-                .assign(lat_place=self.df.loc[int(place_id)]['lat'])
-                .assign(lng_place=self.df.loc[int(place_id)]['lng'])
+                .loc[lambda df: df['id'] != place_id]
+                .assign(lat_place=self.df.loc[place_id]['lat'])
+                .assign(lng_place=self.df.loc[place_id]['lng'])
                 .assign(distance=lambda x: haversine(x['lat'], x['lng'], x['lat_place'], x['lng_place']))
                 .sort_values('distance')
                 .head(args['n_results'])
                 .drop(['distance', 'lat_place', 'lng_place'], axis=1)
                 .to_dict(orient="records")
             )
-        # if dest_id does not exist return nothing
+        # if place_id does not exist return nothing
         else:
             places = []
 
