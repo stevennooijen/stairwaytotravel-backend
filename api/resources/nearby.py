@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from resources.utils.distance import haversine
+from resources.utils.distance import sort_places_by_distance
 
 parser = reqparse.RequestParser()
 parser.add_argument("n_results", type=int, default=12)
@@ -20,13 +20,8 @@ class Nearby(Resource):
         if place_id in self.df.index:
             places = (
                 self.df
-                .loc[lambda df: df['id'] != place_id]
-                .assign(lat_place=self.df.loc[place_id]['lat'])
-                .assign(lng_place=self.df.loc[place_id]['lng'])
-                .assign(distance=lambda x: haversine(x['lat'], x['lng'], x['lat_place'], x['lng_place']))
-                .sort_values('distance')
+                .pipe(sort_places_by_distance, place_id)
                 .head(args['n_results'])
-                .drop(['distance', 'lat_place', 'lng_place'], axis=1)
                 .to_dict(orient="records")
             )
         # if place_id does not exist return nothing
