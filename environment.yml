@@ -16,3 +16,4 @@ dependencies:
     - Flask-Cors==3.0.9
     - Pillow==8.0.1
     - imageio-ffmpeg==0.4.2  # required for rotating globe mp4
+    - python-dotenv==0.15.0
