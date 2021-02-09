@@ -1,12 +1,12 @@
 import logging
 import os
-import time
 
 import pandas as pd
 import requests
 from dotenv import load_dotenv
 from stairway.apis.visualcrossing.monthly_weather import (
     get_visualcrossing_monthly_weather,
+    await_completion,
 )
 
 load_dotenv()
@@ -99,34 +99,14 @@ def create_locations_string(df):
     return "|".join(df["location"].to_list())
 
 
-def await_completion(response, session):
-    data = response.json()
-    while "status" in data:
-        # check for wrong responses
-        if data["status"] in [4, 5]:
-            logging.warning(f"Status 4 or 5, response data: {data}")
-            raise
-        if data["errorCode"] != 0:
-            logging.warning(f"errorCode not 0, response data: {data}")
-            raise
-        if "directCallback" not in data:
-            logging.warning(f"No CallBack, response data: {data}")
-            raise
-        # if good, sleep and retry
-        time.sleep(SLEEP_SECONDS)
-        data = session.get(
-            url=data["directCallback"], params={"key": VISUALCROSSING_KEY}
-        ).json()
-
-    return data
-
-
 def process_chunck(df, chunck_identifier, session, api_key):
     locations = create_locations_string(df)
     try:
         # actual API call
         response = get_visualcrossing_monthly_weather(locations, session, api_key)
-        data = await_completion(response, session=session)
+        data = await_completion(
+            response, session, api_key, seconds_between_retries=SLEEP_SECONDS
+        )
     except:
         logging.exception(
             logging.warning(

@@ -2,7 +2,6 @@ import concurrent.futures
 import logging
 import os
 import threading
-import time
 from itertools import repeat
 
 import pandas as pd
@@ -10,6 +9,7 @@ import requests
 from dotenv import load_dotenv
 from stairway.apis.visualcrossing.monthly_weather import (
     get_visualcrossing_monthly_weather,
+    await_completion,
 )
 
 load_dotenv()
@@ -58,28 +58,6 @@ def create_subsets_of_list(list_in, n=STEP_SIZE):
     return [list_in[i * n : (i + 1) * n] for i in range((len(list_in) + n - 1) // n)]
 
 
-def await_completion(response, session):
-    data = response.json()
-    while "status" in data:
-        # check for wrong responses
-        if data["status"] in [4, 5]:
-            logging.warning(f"Status 4 or 5, response data: {data}")
-            raise
-        if data["errorCode"] != 0:
-            logging.warning(f"errorCode not 0, response data: {data}")
-            raise
-        if "directCallback" not in data:
-            logging.warning(f"No CallBack, response data: {data}")
-            raise
-        # if good, sleep and retry
-        time.sleep(SLEEP_SECONDS)
-        data = session.get(
-            url=data["directCallback"], params={"key": VISUALCROSSING_KEY}
-        ).json()
-
-    return data
-
-
 def get_session():
     if not hasattr(thread_local, "session"):
         thread_local.session = requests.Session()
@@ -101,7 +79,12 @@ def download_site(locations, output_path):
         response = get_visualcrossing_monthly_weather(
             "|".join(geolocations), session, VISUALCROSSING_KEY
         )
-        data = await_completion(response, session=session)
+        data = await_completion(
+            response,
+            session,
+            api_key=VISUALCROSSING_KEY,
+            seconds_between_retries=SLEEP_SECONDS,
+        )
     except:
         logging.exception(
             logging.warning(

@@ -1,6 +1,9 @@
+import logging
+import time
 from typing import Dict
 
 from requests import Session
+from requests.models import Response
 
 URL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/weatherdata/historysummary"
 
@@ -33,3 +36,28 @@ def get_visualcrossing_monthly_weather(
 
     response = session.get(url=URL, params=params)
     return response
+
+
+def await_completion(
+    response: Response, session: Session, api_key: str, seconds_between_retries: int = 5
+):
+    """
+    Monitor asynchronous Visual Crossing historical weather summaries API call and return data when finished.
+    """
+    data = response.json()
+    while "status" in data:
+        # check for wrong responses
+        if data["status"] in [4, 5]:
+            logging.warning(f"Status 4 or 5, response data: {data}")
+            raise
+        if data["errorCode"] != 0:
+            logging.warning(f"errorCode not 0, response data: {data}")
+            raise
+        if "directCallback" not in data:
+            logging.warning(f"No CallBack, response data: {data}")
+            raise
+        # if good, sleep and retry
+        time.sleep(seconds_between_retries)
+        data = session.get(url=data["directCallback"], params={"key": api_key}).json()
+
+    return data
