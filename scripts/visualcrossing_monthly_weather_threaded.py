@@ -77,32 +77,37 @@ def download_site(locations, output_path):
 
     # actual API call
     try:
-        response = get_visualcrossing_monthly_weather(
+        data = get_visualcrossing_monthly_weather(
             "|".join(geolocations), session, VISUALCROSSING_KEY
-        )
-        # if error, keep retrying the batch until there is a successful response
-        while response.json()["errorCode"] != 0:
+        ).json()
+
+        # if locations data is not readily available, query again
+        if "locations" not in data:
+            # if error, keep retrying until there is a successful response
+            while data["errorCode"] != 0:
+                logging.info(
+                    f"Retry batch {indexes[0]}-{indexes[-1]} in thread: {threading.get_ident()}."
+                    + f"Response: {data}."
+                )
+                time.sleep(SLEEP_SECONDS)
+                data = get_visualcrossing_monthly_weather(
+                    "|".join(geolocations), session, VISUALCROSSING_KEY
+                ).json()
+            # now that we have a successful response, await status 'completed'
             logging.info(
-                f"Retry batch {indexes[0]}-{indexes[-1]} in thread: {threading.get_ident()}."
-                + f"Response: {response.content}."
+                f"Awaiting batch {indexes[0]}-{indexes[-1]} in thread: {threading.get_ident()}"
             )
-            time.sleep(SLEEP_SECONDS)
-            response = get_visualcrossing_monthly_weather(
-                "|".join(geolocations), session, VISUALCROSSING_KEY
+            data = await_completion(
+                data,
+                session,
+                api_key=VISUALCROSSING_KEY,
+                seconds_between_retries=SLEEP_SECONDS,
             )
-        logging.info(
-            f"Awaiting batch {indexes[0]}-{indexes[-1]} in thread: {threading.get_ident()}"
-        )
-        data = await_completion(
-            response,
-            session,
-            api_key=VISUALCROSSING_KEY,
-            seconds_between_retries=SLEEP_SECONDS,
-        )
     except:
         logging.exception(
             logging.warning(
-                f"Thread {threading.get_ident()} failed for batch {indexes[0]}-{indexes[-1]} with locations string: {geolocations}"
+                f"Thread {threading.get_ident()} failed for batch {indexes[0]}-{indexes[-1]}"
+                + f" with locations: {geolocations} and response: {data}"
             )
         )
         raise
@@ -113,8 +118,10 @@ def download_site(locations, output_path):
     for place in data:
         place.update({"stairway_id": id_lookup_dict[place["name"]]})
     # unnest data
-    df_weather = pd.io.json.json_normalize(
-        data, "values", ["name", "tz", "stairway_id"]
+    df_weather = pd.json_normalize(data, "values", ["name", "tz", "stairway_id"])
+    logging.info(
+        f"Writing batch {indexes[0]}-{indexes[-1]} in thread: {threading.get_ident()}."
+        + f"Number of records: {len(df_weather)}"
     )
 
     # if file does not exist write with header, else append

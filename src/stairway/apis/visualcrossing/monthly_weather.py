@@ -10,7 +10,7 @@ URL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/service
 
 def get_visualcrossing_monthly_weather(
     locations: str, session: Session, api_key: str, allow_async: bool = True,
-) -> Dict:
+) -> Response:
     """
     Query Visual Crossing historical weather summaries API to get monthly weather.
     """
@@ -39,15 +39,16 @@ def get_visualcrossing_monthly_weather(
 
 
 def await_completion(
-    response: Response, session: Session, api_key: str, seconds_between_retries: int = 5
-):
+    data: Dict, session: Session, api_key: str, seconds_between_retries: int = 5
+) -> Dict:
     """
     Monitor asynchronous Visual Crossing historical weather summaries API call and return data when finished.
     """
-    data = response.json()
+    # if there is an errorCode we should nog proceed with this function
     if data["errorCode"] != 0:
         logging.warning(f"errorCode not 0, input response data: {data}")
         raise
+    # as long as there is a status field, there is no data. So keep querying
     while "status" in data:
         # check for wrong responses
         if data["status"] in [4, 5]:
