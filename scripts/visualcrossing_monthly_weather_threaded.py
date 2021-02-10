@@ -2,6 +2,7 @@ import concurrent.futures
 import logging
 import os
 import threading
+import time
 from itertools import repeat
 
 import pandas as pd
@@ -21,7 +22,7 @@ logging.basicConfig(level=logging.INFO)
 VISUALCROSSING_KEY = os.getenv("VISUALCROSSING_KEY")
 URL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/weatherdata/historysummary"
 # Take into account Visual Crossing API maximum of 10 places in one call
-MAX_WORKERS = 4
+MAX_WORKERS = 2
 STEP_SIZE = 10
 SLEEP_SECONDS = 5
 
@@ -78,6 +79,19 @@ def download_site(locations, output_path):
     try:
         response = get_visualcrossing_monthly_weather(
             "|".join(geolocations), session, VISUALCROSSING_KEY
+        )
+        # if error, keep retrying the batch until there is a successful response
+        while response.json()["errorCode"] != 0:
+            logging.info(
+                f"Retry batch {indexes[0]}-{indexes[-1]} in thread: {threading.get_ident()}."
+                + f"Response: {response.content}."
+            )
+            time.sleep(SLEEP_SECONDS)
+            response = get_visualcrossing_monthly_weather(
+                "|".join(geolocations), session, VISUALCROSSING_KEY
+            )
+        logging.info(
+            f"Awaiting batch {indexes[0]}-{indexes[-1]} in thread: {threading.get_ident()}"
         )
         data = await_completion(
             response,

@@ -45,6 +45,9 @@ def await_completion(
     Monitor asynchronous Visual Crossing historical weather summaries API call and return data when finished.
     """
     data = response.json()
+    if data["errorCode"] != 0:
+        logging.warning(f"errorCode not 0, input response data: {data}")
+        raise
     while "status" in data:
         # check for wrong responses
         if data["status"] in [4, 5]:
