@@ -19,3 +19,5 @@ dependencies:
     - Pillow==8.0.1
     - imageio-ffmpeg==0.4.2  # required for rotating globe mp4
     - python-dotenv==0.15.0
+    - pre-commit==2.10.1
+    - isort==5.7.0
