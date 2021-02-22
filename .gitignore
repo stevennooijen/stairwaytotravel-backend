@@ -12,3 +12,8 @@ examples/
 old-r-scripts/
 .env
 .vscode/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
