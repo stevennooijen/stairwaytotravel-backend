@@ -1,6 +1,6 @@
 from io import BytesIO
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
 import requests
 from PIL import Image, ImageDraw, ImageFont
@@ -17,9 +17,9 @@ def create_instagram_image(
     place_text: str,
     country_text: str,
     output_path: str = None,
-    logo_layer_path: str = LOGO_LAYER_PATH,
-    place_font_path: str = PLACE_FONT_PATH,
-    country_font_path: str = COUNTRY_FONT_PATH,
+    logo_layer_path: Union[Path, str] = LOGO_LAYER_PATH,
+    place_font_path: Union[Path, str] = PLACE_FONT_PATH,
+    country_font_path: Union[Path, str] = COUNTRY_FONT_PATH,
 ) -> Image:
     """
     Format an image from file or url to the Stairway Instagram post format.
@@ -63,7 +63,9 @@ def create_instagram_image(
 
     # text layer
     add_text_to_image(image, place_text, (210, 870), str(place_font_path), 80)
-    add_text_to_image(image, country_text, (210, 962), str(country_font_path), 40)
+    add_text_to_image(
+        image, country_text, (210, 962), str(country_font_path), 40
+    )
 
     if output_path:
         image.save(output_path, optimize=True, quality=90)
@@ -88,7 +90,7 @@ def resize_image(image: Image, smallest_dimension: int = 1080):
     return image.resize((new_width, new_height))
 
 
-def crop_image_center(image: Image, crop_size: Tuple[int] = (1080, 1080)):
+def crop_image_center(image: Image, crop_size: Tuple[int, int] = (1080, 1080)):
     """
     Crop and return the center of the image of dimensions `crop_size`.
     """
@@ -105,7 +107,9 @@ def crop_image_center(image: Image, crop_size: Tuple[int] = (1080, 1080)):
     return image.crop((left, top, right, bottom))
 
 
-def add_text_to_image(image, text, coordinates, font, size, color="rgb(255, 255, 255)"):
+def add_text_to_image(
+    image, text, coordinates, font, size, color="rgb(255, 255, 255)"
+):
     """
     Add text to an image.
     """

@@ -1,9 +1,9 @@
 import random
 
 import pandas as pd
-from stairway.wikivoyage.preprocessing import scope_minimal_nr_tokens
-from stairway.utils.utils import add_normalized_column
 
+from stairway.utils.utils import add_normalized_column
+from stairway.wikivoyage.preprocessing import scope_minimal_nr_tokens
 
 API_COLUMNS = [
     "id",
@@ -67,7 +67,8 @@ def parse_args(*args):
 
 def create_id_mapping(nr_of_digits=6, seed=123):
     """
-    Creates a DataFrame where the index can be used to look up a random id in the "id" column.
+    Creates a DataFrame where the index can be used to look up a random id in
+    the "id" column.
 
     Parameters
     ----------
@@ -79,7 +80,8 @@ def create_id_mapping(nr_of_digits=6, seed=123):
     Returns
     -------
     out: DataFrame
-        DataFrame with an "id" column containing the newly generated X digits ids.
+        DataFrame with an "id" column containing the newly generated X digits
+        ids.
     """
     random.seed(seed)
     hash_min = 10 ** (nr_of_digits - 1)
@@ -91,7 +93,8 @@ def create_id_mapping(nr_of_digits=6, seed=123):
 
 def add_random_id(df_in, id_column_to_map="wiki_id"):
     """
-    Maps an integer id column to a random unique 6 digit id using a generated mapping table.
+    Maps an integer id column to a random unique 6 digit id using a generated
+    mapping table.
 
     Parameters
     ----------
@@ -115,21 +118,26 @@ def add_random_id(df_in, id_column_to_map="wiki_id"):
 
 def add_sample_weight(df_in, power_factor=1.5):
     """
-    Add a column with weights for biased sampling towards places with a higher number of tokens.
+    Add a column with weights for biased sampling towards places with a higher
+    number of tokens.
 
     Parameters
     ----------
     df_in: DataFrame
-        Input DataFrame with a "nr_tokens" column containing the number of tokens in a destination text.
+        Input DataFrame with a "nr_tokens" column containing the number of
+        tokens in a destination text.
     power_factor: float
-        Value used for inflating the nr_tokens value to get to the desired sampling weight.
+        Value used for inflating the nr_tokens value to get to the desired
+        sampling weight.
 
     Returns
     -------
     out: DataFrame
         DataFrame with a "weight" column containing the sampling weights.
     """
-    return df_in.assign(weight=lambda df: (df["nr_tokens"] ** power_factor).astype(int))
+    return df_in.assign(
+        weight=lambda df: (df["nr_tokens"] ** power_factor).astype(int)
+    )
 
 
 def prepare_for_api(df_in):
