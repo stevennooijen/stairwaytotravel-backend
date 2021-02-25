@@ -1,7 +1,7 @@
 # Wikivoyage data pipeline
 
 This README describes the different steps and utilities to extract and clean
-the wikivoyage data set. 
+the wikivoyage data set.
 
 ## Structure
 
@@ -22,14 +22,14 @@ data_dir = `data/wikivoyage/`
     - input: `processed/wikivoyage_destinations.csv`
     - output: `enriched/wikivoyage_destinations.csv`
         - a copy is saved to the flak api directory (`api/data/`).
-    - notebooks: 
+    - notebooks:
         - `sampling-weight.ipynb`
         - `activities-bm25.ipynb`
             - input: `feature_terms.csv` and `feature_profiles.csv`
             - output: `enriched/wikivoyage_features.csv`
                 - a copy is saved to the flak api directory (`api/data/`).
             - **TODO:** convert to module.
-    
+
 ## Running the pipeline
 
 **TODO:** Create a main.py that runs all above steps in one go.
@@ -37,7 +37,7 @@ data_dir = `data/wikivoyage/`
 For now, only the feature engineering pipeline can be run from the command line:
 
 ```bash
-python src/stairway/wikivoyage/feature_engineering.py 
+python src/stairway/wikivoyage/feature_engineering.py
 ```
 
 ## API usage

@@ -22,18 +22,15 @@ import multiprocessing
 import re
 import signal
 from pickle import PicklingError
-from xml.etree.cElementTree import (
+from xml.etree.cElementTree import (  # LXML isn't faster, so let's go with the built-in solution
     iterparse,
-)  # LXML isn't faster, so let's go with the built-in solution
+)
 
 from gensim import utils
-
 # cannot import whole gensim.corpora, because that imports wikicorpus...
 from gensim.corpora.dictionary import Dictionary
 from gensim.corpora.textcorpus import TextCorpus
-
 from six import raise_from
-
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +68,8 @@ RE_P11 = re.compile(r"<(.*?)>", re.DOTALL | re.UNICODE)
 RE_P12 = re.compile(r"(({\|)|(\|-(?!\d))|(\|}))(.*?)(?=\n)", re.UNICODE)
 """Table formatting."""
 RE_P13 = re.compile(
-    r"(?<=(\n[ ])|(\n\n)|([ ]{2})|(.\n)|(.\t))(\||\!)([^[\]\n]*?\|)*", re.UNICODE
+    r"(?<=(\n[ ])|(\n\n)|([ ]{2})|(.\n)|(.\t))(\||\!)([^[\]\n]*?\|)*",
+    re.UNICODE,
 )
 """Table cell formatting."""
 RE_P14 = re.compile(r"\[\[Category:[^][]*\]\]", re.UNICODE)
@@ -147,8 +145,12 @@ def filter_example(elem, text, *args, **kwargs):
     # regex is in the function call so that we do not pollute the wikicorpus
     # namespace do not do this in production as this function is called for
     # every element in the wiki dump
-    _regex_de_excellent = re.compile(r".*\{\{(Exzellent.*?)\}\}[\s]*", flags=re.DOTALL)
-    _regex_de_featured = re.compile(r".*\{\{(Lesenswert.*?)\}\}[\s]*", flags=re.DOTALL)
+    _regex_de_excellent = re.compile(
+        r".*\{\{(Exzellent.*?)\}\}[\s]*", flags=re.DOTALL
+    )
+    _regex_de_featured = re.compile(
+        r".*\{\{(Lesenswert.*?)\}\}[\s]*", flags=re.DOTALL
+    )
 
     if text is None:
         return False
@@ -210,7 +212,9 @@ def filter_wiki(
     # contributions to improving this code are welcome :)
     text = utils.to_unicode(raw, "utf8", errors="ignore")
     text = utils.decode_htmlentities(text)  # '&amp;nbsp;' --> '\xa0'
-    return remove_markup(text, promote_remaining, simplify_links, extract_features)
+    return remove_markup(
+        text, promote_remaining, simplify_links, extract_features
+    )
 
 
 def extract_geolocation(s):
@@ -223,7 +227,11 @@ def extract_geolocation(s):
 
     # get geo coordinates if available
     match = re.search(pattern, s)
-    lat, lon = (float(match.group(2)), float(match.group(3))) if match else (None, None)
+    lat, lon = (
+        (float(match.group(2)), float(match.group(3)))
+        if match
+        else (None, None)
+    )
     return lat, lon
 
 
@@ -247,7 +255,8 @@ def extract_article_type(s):
 def extract_ispartof(s):
     """Retrieves wikivoyage `{{IsPartOf|...}}` feature from text."""
     pattern = re.compile(
-        r"(?s:.*){{(ispartof|isin)\|([^}{]*)}}", re.DOTALL | re.UNICODE | re.IGNORECASE
+        r"(?s:.*){{(ispartof|isin)\|([^}{]*)}}",
+        re.DOTALL | re.UNICODE | re.IGNORECASE,
     )
 
     match = re.search(pattern, s)
@@ -329,10 +338,16 @@ def remove_markup(
         text = re.sub(RE_P5, "\\3", text)  # remove urls, keep description
 
         if simplify_links:
-            text = re.sub(RE_P6, "\\2", text)  # simplify links, keep description only
+            text = re.sub(
+                RE_P6, "\\2", text
+            )  # simplify links, keep description only
         # remove table markup
-        text = text.replace("!!", "\n|")  # each table head cell on a separate line
-        text = text.replace("|-||", "\n|")  # for cases where a cell is filled with '-'
+        text = text.replace(
+            "!!", "\n|"
+        )  # each table head cell on a separate line
+        text = text.replace(
+            "|-||", "\n|"
+        )  # for cases where a cell is filled with '-'
         text = re.sub(RE_P12, "\n", text)  # remove formatting lines
         text = text.replace(
             "|||", "|\n|"
@@ -421,7 +436,10 @@ def remove_file(s):
 
 
 def tokenize(
-    content, token_min_len=TOKEN_MIN_LEN, token_max_len=TOKEN_MAX_LEN, lower=True
+    content,
+    token_min_len=TOKEN_MIN_LEN,
+    token_max_len=TOKEN_MAX_LEN,
+    lower=True,
 ):
     """Tokenize a piece of text from Wikipedia.
     Set `token_min_len`, `token_max_len` as character length (not bytes!) thresholds for individual tokens.
@@ -444,7 +462,8 @@ def tokenize(
     return [
         utils.to_unicode(token)
         for token in utils.tokenize(content, lower=lower, errors="ignore")
-        if token_min_len <= len(token) <= token_max_len and not token.startswith("_")
+        if token_min_len <= len(token) <= token_max_len
+        and not token.startswith("_")
     ]
 
 
@@ -462,7 +481,9 @@ def get_namespace(tag):
     m = re.match("^{(.*?)}", tag)
     namespace = m.group(1) if m else ""
     if not namespace.startswith("http://www.mediawiki.org/xml/export-"):
-        raise ValueError("%s not recognized as MediaWiki dump namespace" % namespace)
+        raise ValueError(
+            "%s not recognized as MediaWiki dump namespace" % namespace
+        )
     return namespace
 
 
@@ -764,9 +785,18 @@ class WikiCorpus(TextCorpus):
             self.lower,
         )
         texts = (
-            (text, self.lemmatize, title, pageid, redirect, tokenization_params)
+            (
+                text,
+                self.lemmatize,
+                title,
+                pageid,
+                redirect,
+                tokenization_params,
+            )
             for title, text, pageid, redirect in extract_pages(
-                bz2.BZ2File(self.fname), self.filter_namespaces, self.filter_articles
+                bz2.BZ2File(self.fname),
+                self.filter_namespaces,
+                self.filter_articles,
             )
         )
         pool = multiprocessing.Pool(self.processes, init_to_ignore_interrupt)
@@ -778,23 +808,36 @@ class WikiCorpus(TextCorpus):
                 texts, chunksize=10 * self.processes, maxsize=1
             ):
                 # ADJ: also return patterns and text
-                for patterns, text, tokens, title, pageid, redirect in pool.imap(
-                    _process_article, group
-                ):
+                for (
+                    patterns,
+                    text,
+                    tokens,
+                    title,
+                    pageid,
+                    redirect,
+                ) in pool.imap(_process_article, group):
                     # ADJ: keep track of nr of tokensx
                     nr_tokens = len(tokens)
                     articles_all += 1
                     positions_all += nr_tokens
                     # article redirects and short stubs are pruned here
                     if nr_tokens < self.article_min_tokens or any(
-                        title.startswith(ignore + ":") for ignore in IGNORED_NAMESPACES
+                        title.startswith(ignore + ":")
+                        for ignore in IGNORED_NAMESPACES
                     ):
                         continue
                     articles += 1
                     positions += nr_tokens
                     # ADJ: return items of our desire, incl. count of number of tokens
                     if self.metadata:
-                        yield (pageid, title, redirect, nr_tokens, patterns, text)
+                        yield (
+                            pageid,
+                            title,
+                            redirect,
+                            nr_tokens,
+                            patterns,
+                            text,
+                        )
                     else:
                         yield tokens
 
@@ -858,7 +901,15 @@ class WikiCorpus(TextCorpus):
             title,
             redirect,
             nr_tokens,
-            (status, articletype, lat, lon, ispartof, disambiguation, historical),
+            (
+                status,
+                articletype,
+                lat,
+                lon,
+                ispartof,
+                disambiguation,
+                historical,
+            ),
             text,
         ) in self.get_texts():
             writer.writerow(
