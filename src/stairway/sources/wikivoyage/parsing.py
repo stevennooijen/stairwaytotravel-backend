@@ -1,3 +1,5 @@
+# flake8: noqa
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
