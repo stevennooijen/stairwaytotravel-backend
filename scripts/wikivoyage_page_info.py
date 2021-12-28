@@ -1,10 +1,10 @@
-import logging
+# import logging
 import os
 import time
 
 import pandas as pd
-from stairway.apis.wikivoyage.page_info import get_wikivoyage_page_info
 
+from stairway.apis.wikivoyage.page_info import get_wikivoyage_page_info
 
 # Be reasonable with querying, always query 50 at once to reduce burden
 BATCH_SIZE = 50  # number of queries per batch
@@ -24,16 +24,22 @@ def main(*args):
     for batch in range(
         int(options.start_index), len(page_ids), BATCH_SIZE * PAGES_PER_QUERY
     ):
-        print(f"Now doing batch: {batch}-{batch + BATCH_SIZE * PAGES_PER_QUERY}")
+        print(
+            f"Now doing batch: {batch}-{batch + BATCH_SIZE * PAGES_PER_QUERY}"
+        )
 
         df_batch = pd.concat(
             [
                 pd.DataFrame.from_dict(
-                    get_wikivoyage_page_info(page_ids[query : query + PAGES_PER_QUERY]),
+                    get_wikivoyage_page_info(
+                        page_ids[query : query + PAGES_PER_QUERY]  # noqa: E203
+                    ),
                     orient="index",
                 )
                 for query in range(
-                    batch, batch + BATCH_SIZE * PAGES_PER_QUERY, PAGES_PER_QUERY
+                    batch,
+                    batch + BATCH_SIZE * PAGES_PER_QUERY,
+                    PAGES_PER_QUERY,
                 )
                 if query < len(page_ids)
             ]
@@ -43,8 +49,12 @@ def main(*args):
         if not os.path.isfile(options.output_path):
             df_batch.to_csv(options.output_path, index=False)
         else:
-            df_batch.to_csv(options.output_path, mode="a", header=False, index=False)
-        print(f"Done with batch: {batch}-{batch + BATCH_SIZE * PAGES_PER_QUERY}")
+            df_batch.to_csv(
+                options.output_path, mode="a", header=False, index=False
+            )
+        print(
+            f"Done with batch: {batch}-{batch + BATCH_SIZE * PAGES_PER_QUERY}"
+        )
         print("Sleeping ... zzz")
         time.sleep(SLEEP_SECONDS)
 
@@ -54,7 +64,9 @@ def main(*args):
 def parse_args(*args):
     from argparse import ArgumentParser
 
-    parser = ArgumentParser(description="Create list of Flickr images for all places.")
+    parser = ArgumentParser(
+        description="Create list of Wikivoyage data for all places."
+    )
     parser.add_argument(
         "-i",
         "--input-path",
