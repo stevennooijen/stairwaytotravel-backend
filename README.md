@@ -1,11 +1,13 @@
-# README
+# Stairway to Travel: Backend
 
-Set up simple backend web-service with GCP.
+This is the code repository containing backend related services for Stairway
+to Travel. The repository's focus is on preparing data and creating a simple
+backend web-service API on Google Cloud Platform (GCP).
 
 ## What do I want to do?
 
 Eventually:
-- Database with destinations 
+- Database with destinations
     - GET destinations
 - Database for user interaction
     - POST interactions (like, dislike, view, click)
@@ -18,7 +20,7 @@ Requirements:
     - Either cloud functions; OR
     - App engine services
 
-ToDo checklist: 
+ToDo checklist:
 - [x] Create destinations database
 - [ ] Create Cloud Function for retrieving (random) destinations from the DB
     - [x] Set up local Flask to test the API / emulate the function
@@ -113,15 +115,15 @@ pip install --editable .
 ### Two serverless options for hosting:
 
 1. Cloud Functions
-    - Define functions that accept a `flask.Request` object and deploy that. 
-    - Although some tips & tricks, best practices and tests in the documentation, a Python emulator is not existent. 
+    - Define functions that accept a `flask.Request` object and deploy that.
+    - Although some tips & tricks, best practices and tests in the documentation, a Python emulator is not existent.
 
 2. App Engine
     - Create local Flask App then deploy on GCP.
-    - Your apps scale automatically to meet traffic demand.    
+    - Your apps scale automatically to meet traffic demand.
 
-[Difference](https://www.quora.com/Whats-the-difference-between-Cloud-Functions-and-App-Engine-in-Google-Cloud): 
-Cloud Functions is a straightforward “serverless” offering, while App Engine can be used to customize 
+[Difference](https://www.quora.com/Whats-the-difference-between-Cloud-Functions-and-App-Engine-in-Google-Cloud):
+Cloud Functions is a straightforward “serverless” offering, while App Engine can be used to customize
 the application infrastructure that meets the needs of your app. In other words: App Engine is more flexible.
 
 ### Database to be used:
@@ -136,12 +138,12 @@ Both Cloud Functions and App Engine can connect to the database.
 
 See `notebooks/` folder for reference material on how to use Firestore.
 
-NOTE: the [free tier](https://firebase.google.com/docs/firestore/quotas) allows 20.000 writes/deletes per day and up to 
-1GB of data. Number of free reads per day is 50.000. So take care to stay below that! This might become an issue when 
-we want to do more advanced modelling that needs to read/score the entire data set. Also it might be troublesome quickly 
+NOTE: the [free tier](https://firebase.google.com/docs/firestore/quotas) allows 20.000 writes/deletes per day and up to
+1GB of data. Number of free reads per day is 50.000. So take care to stay below that! This might become an issue when
+we want to do more advanced modelling that needs to read/score the entire data set. Also it might be troublesome quickly
 in case the number of users picks up. For now, just go with it!
 
- 
+
 
 ### Combining both:
 
