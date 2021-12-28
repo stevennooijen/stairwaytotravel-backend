@@ -3,6 +3,7 @@ import time
 
 import pandas as pd
 from PIL import UnidentifiedImageError
+
 from stairway.instagram.image import create_instagram_image
 
 TOP_X_IMAGES = 5
@@ -31,7 +32,9 @@ def main(*args):
     # Process chuncked up input df with a sleep timer of an hour
     for i in range(int(options.start_index), len(df_images), STEP_SIZE):
         print(f"Now doing images: {i}-{i + STEP_SIZE}")
-        df_images.iloc[i : i + STEP_SIZE].apply(process_row, axis=1)
+        df_images.iloc[i : i + STEP_SIZE].apply(  # noqa: E203
+            process_row, axis=1
+        )
 
         print(f"Done processing images: {i}-{i + STEP_SIZE}")
         print("Sleeping ... zzz")
@@ -57,7 +60,7 @@ def parse_args(*args):
         "-o",
         "--output-path",
         dest="output_path",
-        default="/Users/terminator/travel/instagram-images/",
+        default="data/instagram-images/",
         help="Path to the output folder.",
     )
     parser.add_argument(
@@ -78,16 +81,18 @@ def process_row(row):
         )
     except UnidentifiedImageError:
         logging.warning(
-            f"Failed at image {row['stairway_id']}-{row['index']} with url_b: {row['url_b']}"
+            f"Failed at image {row['stairway_id']}-{row['index']} "
+            + f"with url_b: {row['url_b']}"
         )
         try:
             create_instagram_image(
                 row["url_o"], row["name"], row["country"], row["output_path"]
             )
-        except:
+        except Exception:
             logging.exception(
                 logging.warning(
-                    f"Failed at image {row['stairway_id']}-{row['index']} with url_o: {row['url_o']}"
+                    f"Failed at image {row['stairway_id']}-{row['index']} "
+                    + f"with url_o: {row['url_o']}"
                 )
             )
             pass

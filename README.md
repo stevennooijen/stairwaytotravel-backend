@@ -174,6 +174,5 @@ Code for these things can be found partly in `notebooks/one-off-analyses/`.
 ## TODO
 
 - [ ] Add LICENSE?
-- [ ] Checking local paths in scripts (users/terminator)
 - [ ] Link intro text in this README to blog post.
 - [ ] Add reference to issues with possible next steps?
