@@ -96,11 +96,17 @@ Things to consider:
 - Anything in the `api/` folder is uploaded. So this way you can add helper
 files in for example `credentials/` and `data/` folders.
 
+### Debugging
+
 To debug, listen to the logs of the deployed app:
 
 ```bash
 gcloud app logs tail -s default
 ```
+
+Additionally, there's a small script named `profile-flask.py` that can be run
+to profile the web application and find factors that negatively influence the
+app's performance.
 
 ### CORS support
 
