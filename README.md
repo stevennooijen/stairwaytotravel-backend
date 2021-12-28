@@ -1,9 +1,22 @@
 # Stairway to Travel: Backend
 
-This is the code repository containing backend related services for [Stairway
-to Travel](https://stairwaytotravel.com/). The repository's focus is on
-preparing data and creating a simple backend web-service API on Google Cloud
-Platform (GCP).
+[Stairway to Travel](https://stairwaytotravel.com/) offers personalized travel
+recommendations that help you shape unique itineraries.
+
+Stairway to Travel has long been my dream project with the aspiration of
+becoming a profitable business. Now, I am donating my code to the community
+that I have benefitted of so much in the creation of this website. I hope you
+will learn or benefit from what I did. Please feel free to reach out in case
+of questions or remarks!
+
+## About this repo
+
+This is the code repository containing backend related services for Stairway
+to Travel. The repository's goal is to version control code related to:
+
+1. The backend web-service API hosted on Google Cloud Platform (GCP).
+2. Analysis and preparation of various data sources.
+3. One-off analyses, for example for marketing purposes.
 
 ## Folder structure
 
@@ -48,9 +61,16 @@ Retrieval of the keys happens in two ways:
 2. Through saving the keys in a gitignored `credentials/` folder and
 reading it from the local file.
 
-## The web-service API
+## 1. The web-service API
 
 The code for the web app can be found in the `api/` folder.
+
+Please find below a high level architecture of the application. Read more about
+each component in the remainder of this section.
+
+![Application architecture](/documentation/architecture/stairway-architecture.png)
+
+### The Flask app
 
 At the time of creation, I choose Python
 [Flask](https://flask.palletsprojects.com/en/2.0.x/) for the web
@@ -68,23 +88,88 @@ meaning that the apps scales automatically to meet traffic demand. I have also
 considered Cloud Functions, but I found that App Engine is a bit more flexible
 in terms of customizing the application infrastructure.
 
-Furthermore, I initially used Google's NoSQL cloud database
+### Ping service
+
+The downside of a serverless offering is a bit of request and response latency
+during the time when your app's code is being loaded to a newly created
+instance. Although this can be completely avoided by always having a machine up
+and running, this would also incur costs. To stay within the Free Tier, I use
+Cloud Functions and Cloud Scheduler to regularly ping my App Engine instance
+so that the machine will be kept 'alive'. By doing so every 10 minutes, I found
+an ideal balance between possible latency and costs on the other hand.
+
+### The database
+
+I initially used Google's NoSQL cloud database
 [Cloud Firestore](https://cloud.google.com/firestore) to fetch place
-information from (also a Free Tier product), but as my dataset turned out to
-be limited in size, it is simply faster to upload the data to the App Engine
+information from (also a Free Tier product). However, as my dataset turned out
+to be limited in size, it is simply faster to upload the data to the App Engine
 and serve recommendations directly from there without connecting to a separate
-database.
+database. The Cloud Firestore component in the architecture diagram above is
+therefore no longer in use.
 
 The `notebooks/api/google-firestore/` folder still contains several notebooks
 with examples on how to load and retrieve data with Cloud Firestore. I make an
 assessment on whether Firestore is fit for purpose in
 `querying-firestore.ipynb` and conclude that it's not suited for my use case.
 
-## Data Preparation
+### Mailchimp
 
-The code for all data preparation can be found in the `scripts/`, `notebooks/`
-and `src/` folders.
+Mailchimp is used for email automation whenever users sign up for newsletters
+or when they check-out with their bucket list of places they want to visit.
 
+Details on the designed architecture and workflow automation can be found in
+the `documentation/mailchimp/` folder.
+
+## 2. Data Preparation
+
+The second function of this repository is to prepare data for use in the
+recommendation service. Over time, I have investigated many different datasets
+and I have often done so in Jupyter notebooks. Hence, the code for data
+preparation is a bit more messy then for the API and the code is spread over
+the `scripts/`, `notebooks/` and `src/` folders.
+
+A diagram with a detailed approach on how to clean and combine data can be
+found in the `documentation/data-processing/` folder. In general, data prep
+follows the following phases wherein intermediate data is stored locally in
+the `data/` folder:
+
+1. **Raw**: a copy from the source as-is in its original format
+2. **Clean**: transformed data in a easy to handle CSV format
+3. **Processed**: feature extraction on the cleaned data
+4. **Enriched**: cleaned datasets are combined into their final shape
+5. **API Data**: data for the API is copied into the `api/data/` folder so that
+it will be uploaded to Google App Engine when deploying the Flask app.
+
+To get your own copy of raw data, follow the instructions below:
+
+| Source | Data type | How to get it  |
+|---|---|---|
+| Wikivoyage | Place info | Download latest `.xml.bz2` files [here](https://dumps.wikimedia.org/enwikivoyage/latest/) |
+| Wikivoyage | Page info | Public API, run script `wikivoyage_page_info.py` |
+| Wikivoyage | Place activities | Feature extraction with BM25. See `features-bm25.ipynb` |
+| University of Delaware | Weather | Download `.nc` files [here](https://psl.noaa.gov/data/gridded/data.UDel_AirT_Precip.html) |
+| Visual Crossing | Weather | Paid API, run script `visualcrossing_monthly_weather_threaded.py` |
+| Flickr | Place images | Private API, run script `flickr_image_list` |
+| Flickr | People info | Private API, run script `flickr_people_list` |
+| Geonames | Place info | Download `.zip` files [here](https://download.geonames.org/export/dump/) |
+
+With the above instructions you should be able to replicate all data sets. The
+final data that is used in the API service is the only data that I checked in,
+see the `api/data/` folder.
+
+## 3. One-off Analyses
+
+On occassions I did a one-off analysis that isn't quite related to data prep or
+the backend API service. For example, for marketing purposes, I retrieved
+the top 5 Flickr images per place and formatted them automatically into the
+standard square Instagram format with a text and logo. See the result on
+Stairway to Travel's
+[Instagram profile](https://www.instagram.com/stairwaytotravel/). I also made a
+[rotating globe](https://www.youtube.com/watch?v=B7IMcWXfJL8) depicting which
+places I already covered on Instagram.
+
+Code for these things can be found partly in `notebooks/one-off-analyses/`.
 
 ## TODO
 
@@ -92,3 +177,5 @@ and `src/` folders.
 [ ] Review folder structure
 [ ] Decide which data to check in + Empty folders to keep in data folder
 [ ] Checking local paths in scripts (users/terminator)
+[ ] Link intro text in this README to blog post.
+[ ] Add reference to issues with possible next steps?
