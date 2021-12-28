@@ -18,7 +18,7 @@ to Travel. The repository's goal is to version control code related to:
 2. Analysis and preparation of various data sources.
 3. One-off analyses, for example for marketing purposes.
 
-## Folder structure
+### Folder structure
 
     .
     ├── api               # Flask API files for Google App Engine
@@ -31,7 +31,7 @@ to Travel. The repository's goal is to version control code related to:
     ├── environment.yml   # Requirements for Conda environment
     └── README.md
 
-## Preparing your working environment
+### Preparing your working environment
 
 First prepare the Conda virtual environment:
 
@@ -48,7 +48,7 @@ notebook when using `%autoreload`.
 pip install --editable .
 ```
 
-## Credentials
+### Credentials
 
 Several scripts and functions require credentials to access third party APIs
 like Flickr, Mailchimp or Google App Engine. These keys have not been uploaded
@@ -173,9 +173,7 @@ Code for these things can be found partly in `notebooks/one-off-analyses/`.
 
 ## TODO
 
-[ ] Add LICENSE?
-[ ] Review folder structure
-[ ] Decide which data to check in + Empty folders to keep in data folder
-[ ] Checking local paths in scripts (users/terminator)
-[ ] Link intro text in this README to blog post.
-[ ] Add reference to issues with possible next steps?
+- [ ] Add LICENSE?
+- [ ] Checking local paths in scripts (users/terminator)
+- [ ] Link intro text in this README to blog post.
+- [ ] Add reference to issues with possible next steps?

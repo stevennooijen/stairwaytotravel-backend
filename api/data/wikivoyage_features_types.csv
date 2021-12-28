@@ -1,0 +1,88 @@
+feature_id,feature_name,feature_column,feature_type,nature,city,active,culture,relax,enabled,beach
+1,Off-road vehicles,offroad_vehicles,Scenery,1,0,1,0,0,0,0
+2,Amusement/theme parks,amusement_theme_parks,Scenery,0,1,1,0,1,0,0
+3,Ancient ruins,ancient_ruins,Scenery,1,1,0,1,0,0,0
+4,Architectural buildings,architectural_buildings,Scenery,0,1,0,1,0,0,0
+5,Art galleries,art_galleries,Scenery,0,1,0,1,0,0,0
+6,Museums,museums,Scenery,0,1,0,1,0,1,0
+7,Battlefields,battlefields,Scenery,1,1,0,1,0,0,0
+8,Bays,bays,Scenery,1,0,1,0,1,0,0
+9,Beaches,beaches,Scenery,1,0,0,0,1,1,1
+10,Biking,biking,Scenery,1,0,1,0,0,1,0
+11,Jazz/blues bars,jazz_blues_bars,Scenery,0,1,0,1,1,0,0
+12,Breweries,breweries,Scenery,0,1,0,1,1,1,0
+13,Bridges,bridges,Scenery,1,1,0,1,0,0,0
+14,Canyons,canyons,Scenery,1,0,1,1,0,1,0
+15,Casinos,casinos,Scenery,0,1,1,0,1,0,0
+16,Castles,castles,Scenery,1,1,0,1,0,1,0
+17,Cemeteries,cemeteries,Scenery,0,1,0,1,0,0,0
+18,Coffeehouses,coffeehouses,Scenery,0,1,0,0,1,0,0
+19,Comedy clubs,comedy_clubs,Scenery,0,1,0,1,1,0,0
+20,Bars,bars,Scenery,0,1,1,1,0,1,0
+21,Dance clubs/discos,dance_clubs_discos,Scenery,0,1,1,0,0,1,0
+22,Department stores,department_stores,Scenery,0,1,1,0,0,0,0
+23,Deserts,deserts,Scenery,1,0,1,0,0,1,0
+24,Theaters,theaters,Scenery,0,1,0,1,1,0,0
+25,Hiking,hiking,Scenery,1,0,1,0,0,1,0
+26,Factory outlets,factory_outlets,Scenery,0,1,1,0,0,0,0
+27,Farms,farms,Scenery,1,0,0,1,1,1,0
+28,Flea/street markets,flea_street_markets,Scenery,0,1,1,0,1,0,0
+29,Forests,forests,Scenery,1,0,1,1,1,1,0
+30,Gardens,gardens,Scenery,0,1,0,1,1,1,0
+31,Golf courses,golf_courses,Scenery,0,1,1,0,1,1,0
+32,Boat tours,boat_tours,Scenery,1,1,1,1,1,0,0
+33,Monuments,monuments,Scenery,0,1,0,1,0,0,0
+34,Historic villages,historic_villages,Scenery,0,1,0,1,0,1,0
+35,Horseback riding,horseback_riding,Scenery,1,1,1,0,0,0,0
+36,Hot springs/geysers,hot_springs_geysers,Scenery,1,0,0,0,1,0,0
+37,Islands,islands,Scenery,1,0,1,1,1,1,0
+38,Lakes,lakes,Scenery,1,0,1,1,1,1,0
+39,Landmarks,landmarks,Scenery,1,0,1,1,1,0,0
+40,Viewpoints,viewpoints,Scenery,1,1,1,1,1,0,0
+41,Shopping,shopping,Scenery,0,1,1,0,1,0,0
+42,Marina,marina,Scenery,0,1,1,1,1,0,0
+43,Motorcycle trails,motorcycle_trails,Scenery,1,0,1,0,0,0,0
+44,Mountain biking,mountain_biking,Scenery,1,0,1,0,0,1,0
+45,Mountains,mountains,Scenery,1,0,1,0,0,1,0
+46,Movie theaters,movie_theaters,Scenery,0,1,0,0,1,0,0
+47,Caves,caves,Scenery,1,0,1,0,0,1,0
+48,National parks,national_parks,Scenery,1,0,1,1,1,1,0
+49,Wildlife reserves,wildlife_reserves,Scenery,1,0,1,1,1,0,0
+50,Operas / Ballets,operas_ballets,Scenery,0,1,0,1,1,0,0
+51,Concerts,concerts,Scenery,0,1,0,1,1,0,0
+52,Lagoons,lagoons,Scenery,1,0,1,0,1,1,0
+53,Rivers,rivers,Scenery,1,1,1,0,1,0,0
+54,Scenic drives,scenic_drives,Scenery,1,0,1,1,0,0,0
+55,Neighborhood walks,neighborhood_walks,Scenery,0,1,0,1,1,0,0
+56,Ski Snowboard areas,ski_snowboard_areas,Scenery,1,0,1,0,0,1,0
+57,Spas,spas,Scenery,0,1,0,0,1,0,0
+58,Sport events,sport_events,Scenery,0,1,1,1,0,0,0
+59,University,university,Scenery,0,1,0,1,0,0,0
+60,Statues,statues,Scenery,0,1,0,1,0,0,0
+61,Sightseeing tours,sightseeing_tours,Scenery,0,1,1,1,1,0,0
+62,Town centers/squares/plazas,town_centers_squares_plazas,Scenery,0,1,0,1,0,0,0
+63,Urban parks,urban_parks,Scenery,0,1,1,0,1,0,0
+64,Valleys,valleys,Scenery,1,0,1,0,0,1,0
+65,Volcanos,volcanos,Scenery,1,0,1,0,0,1,0
+66,Water parks,water_parks,Scenery,0,1,1,0,1,0,0
+67,Waterfalls,waterfalls,Scenery,1,0,1,0,0,0,0
+68,Wineries,wineries,Scenery,0,1,0,1,1,1,0
+69,Zoos,zoos,Scenery,0,1,1,0,1,0,0
+70,Surfing,surfing,Scenery,1,1,1,0,0,0,0
+71,Water sports,water_sports,Scenery,1,1,1,0,0,1,0
+72,Kayaking,kayaking,Scenery,1,1,1,0,0,0,0
+73,Rafting,rafting,Scenery,1,0,1,0,0,0,0
+74,Scuba Diving,scuba_diving,Scenery,1,0,1,0,0,1,0
+75,Waterskiing,waterskiing,Scenery,1,1,1,0,0,0,0
+76,Historical tours,historical_tours,Scenery,0,1,0,1,0,0,0
+77,Fishing,fishing,Scenery,1,1,1,0,1,1,0
+78,Whale watching,whale_watching,Scenery,1,0,1,0,1,0,0
+79,Parasailing,sailing,Scenery,1,1,1,0,0,0,0
+80,Paragliding,skydiving,Scenery,1,1,1,0,0,0,0
+81,Cathedrals and churches,cathedrals_and_churches,Scenery,0,1,0,1,0,1,0
+82,Live music / bands,live_music_bands,Scenery,0,1,1,1,1,0,0
+83,Festivals,festivals,Scenery,0,1,0,1,0,0,0
+84,Camping,camping,Scenery,1,0,1,0,0,0,0
+85,Lodging,lodging,Scenery,1,0,0,0,1,0,0
+86,UNESCO,unesco,Scenery,1,1,0,1,0,1,0
+87,Temples,temples,Scenery,1,1,0,1,0,1,0
