@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 # defaults
 INPUT_FOLDER = Path(__file__).parent / "utils"
 LOGO_LAYER_PATH = INPUT_FOLDER / "logo-darkened-bottom.png"
+# NOTE: download the fonts yourself first. https://fonts.google.com/
 PLACE_FONT_PATH = INPUT_FOLDER / "Roboto-Bold.ttf"
 COUNTRY_FONT_PATH = INPUT_FOLDER / "Roboto-Regular.ttf"
 

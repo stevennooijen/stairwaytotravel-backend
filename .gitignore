@@ -17,3 +17,6 @@ old-r-scripts/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# file types
+**/*.pdf
