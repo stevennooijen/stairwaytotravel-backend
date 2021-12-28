@@ -1,4 +1,4 @@
-name: stairway-backend
+name: stairwaytotravel-backend
 channels:
   - defaults
 dependencies:
