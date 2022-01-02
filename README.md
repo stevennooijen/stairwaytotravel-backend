@@ -18,6 +18,10 @@ to Travel. The repository's goal is to version control code related to:
 2. Analysis and preparation of various data sources.
 3. One-off analyses, for example for marketing purposes.
 
+The frontend code for Stairway to Travel's user interface can be found in the
+related repository named
+[stairwaytotravel-frontend](https://github.com/stevennooijen/stairwaytotravel-frontend).
+
 ### Folder structure
 
     .
@@ -63,7 +67,8 @@ reading it from the local file.
 
 ## 1. The web-service API
 
-The code for the web app can be found in the `api/` folder.
+The code for the web app can be found in the `api/` folder, which includes the
+`api/README.md` file with detailed instructions on how to run the API server.
 
 Please find below a high level architecture of the application. Read more about
 each component in the remainder of this section.
@@ -175,4 +180,3 @@ Code for these things can be found partly in `notebooks/one-off-analyses/`.
 
 - [ ] Link intro text in this README to blog post.
 - [ ] Add reference to issues with possible next steps?
-- [ ] link to API readme and link to frontend repository
