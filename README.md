@@ -173,6 +173,6 @@ Code for these things can be found partly in `notebooks/one-off-analyses/`.
 
 ## TODO
 
-- [ ] Add LICENSE?
 - [ ] Link intro text in this README to blog post.
 - [ ] Add reference to issues with possible next steps?
+- [ ] link to API readme and link to frontend repository
