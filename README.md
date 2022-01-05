@@ -9,6 +9,9 @@ that I have benefitted of so much in the creation of this website. I hope you
 will learn or benefit from what I did. Please feel free to reach out in case
 of questions or remarks!
 
+Read the full story about why I am open sourcing everything in
+[my blog](https://stairwaytotravel.com/blog/why-open-source-and-lessons-learned).
+
 ## About this repo
 
 This is the code repository containing backend related services for Stairway
@@ -61,9 +64,9 @@ to Git and you will have to get your own keys for access to these tools.
 Retrieval of the keys happens in two ways:
 
 1. Either through a `.env` file using the
-[`python-dotenv`](https://pypi.org/project/python-dotenv/) package; or
+   [`python-dotenv`](https://pypi.org/project/python-dotenv/) package; or
 2. Through saving the keys in a gitignored `credentials/` folder and
-reading it from the local file.
+   reading it from the local file.
 
 ## 1. The web-service API
 
@@ -144,20 +147,20 @@ the `data/` folder:
 3. **Processed**: feature extraction on the cleaned data
 4. **Enriched**: cleaned datasets are combined into their final shape
 5. **API Data**: data for the API is copied into the `api/data/` folder so that
-it will be uploaded to Google App Engine when deploying the Flask app.
+   it will be uploaded to Google App Engine when deploying the Flask app.
 
 To get your own copy of raw data, follow the instructions below:
 
-| Source | Data type | How to get it  |
-|---|---|---|
-| Wikivoyage | Place info | Download latest `.xml.bz2` files [here](https://dumps.wikimedia.org/enwikivoyage/latest/) |
-| Wikivoyage | Page info | Public API, run script `wikivoyage_page_info.py` |
-| Wikivoyage | Place activities | Feature extraction with BM25. See `features-bm25.ipynb` |
-| University of Delaware | Weather | Download `.nc` files [here](https://psl.noaa.gov/data/gridded/data.UDel_AirT_Precip.html) |
-| Visual Crossing | Weather | Paid API, run script `visualcrossing_monthly_weather_threaded.py` |
-| Flickr | Place images | Private API, run script `flickr_image_list` |
-| Flickr | People info | Private API, run script `flickr_people_list` |
-| Geonames | Place info | Download `.zip` files [here](https://download.geonames.org/export/dump/) |
+| Source                 | Data type        | How to get it                                                                             |
+| ---------------------- | ---------------- | ----------------------------------------------------------------------------------------- |
+| Wikivoyage             | Place info       | Download latest `.xml.bz2` files [here](https://dumps.wikimedia.org/enwikivoyage/latest/) |
+| Wikivoyage             | Page info        | Public API, run script `wikivoyage_page_info.py`                                          |
+| Wikivoyage             | Place activities | Feature extraction with BM25. See `features-bm25.ipynb`                                   |
+| University of Delaware | Weather          | Download `.nc` files [here](https://psl.noaa.gov/data/gridded/data.UDel_AirT_Precip.html) |
+| Visual Crossing        | Weather          | Paid API, run script `visualcrossing_monthly_weather_threaded.py`                         |
+| Flickr                 | Place images     | Private API, run script `flickr_image_list`                                               |
+| Flickr                 | People info      | Private API, run script `flickr_people_list`                                              |
+| Geonames               | Place info       | Download `.zip` files [here](https://download.geonames.org/export/dump/)                  |
 
 With the above instructions you should be able to replicate all data sets. The
 final data that is used in the API service is the only data that I checked in,
@@ -178,5 +181,8 @@ Code for these things can be found partly in `notebooks/one-off-analyses/`.
 
 ## TODO
 
-- [ ] Link intro text in this README to blog post.
-- [ ] Add reference to issues with possible next steps?
+When I was still actively working on this project I kept a huge list of tasks
+with new and improved functionality in Trello. In case you are curious or are
+considering to continue this project, feel free to have a look at the
+[frontend repository's issues](https://github.com/stevennooijen/stairwaytotravel-frontend/issues)
+. I labelled tasks that require backend work with a 'backend' label.
